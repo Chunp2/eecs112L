@@ -1,0 +1,122 @@
+# vsim -l simulation.log -do "sim.do" -c processorTb_opt 
+# Start time: 21:23:01 on Feb 14,2016
+# //  Questa Sim-64
+# //  Version 10.4c linux_x86_64 Jul 19 2015
+# //
+# //  Copyright 1991-2015 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# //  WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS
+# //  LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+# //  THIS DOCUMENT CONTAINS TRADE SECRETS AND COMMERCIAL OR FINANCIAL
+# //  INFORMATION THAT ARE PRIVILEGED, CONFIDENTIAL, AND EXEMPT FROM
+# //  DISCLOSURE UNDER THE FREEDOM OF INFORMATION ACT, 5 U.S.C. SECTION 552.
+# //  FURTHERMORE, THIS INFORMATION IS PROHIBITED FROM DISCLOSURE UNDER
+# //  THE TRADE SECRETS ACT, 18 U.S.C. SECTION 1905.
+# //
+# Loading sv_std.std
+# Loading work.processorTb(fast)
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.processor(behavior)#1
+# Loading work.instructionmemory(behavioral)#1
+# Loading work.concatinator(behavioral)#1
+# Loading work.mux32bit(behavior)#1
+# Loading work.decoder(code)#1
+# Loading work.controller(code)#1
+# Loading work.alufunc(behavior)#1
+# Loading work.signextender(behavior)#1
+# Loading work.alu(behv)#1
+# Loading work.andgate(behavior)#1
+# Loading ieee.std_logic_arith(body)
+# Loading ieee.std_logic_unsigned(body)
+# Loading work.adder(increment)#1
+# Loading work.datamemory(behavior)#1
+# Loading work.loadcontrol(behavior)#1
+# Loading work.mux5bit(behavior)#1
+# Loading work.regfile(behavioral)#1
+# Loading work.pc(behavior)#1
+# Loading work.orgate(behavior)#1
+# Loading work.shiftextender(behavior)#1
+# Loading work.juiextender(behavior)#1
+# Loading work.mux3to1(behavior)#1
+# do sim.do
+# .
+# waveform.wlf
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 0  Instance: .processorTb.L1.PCPlus4
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: .processorTb.L1.Reg
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: .processorTb.L1.Reg
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: .processorTb.L1.RAMs
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 0  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 0  Instance: .processorTb.L1.AddrAdd
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ns  Iteration: 0  Instance: .processorTb.L1.ROM
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 1  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 1  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 0 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 80 ns  Iteration: 2  Instance: .processorTb.L1.RAMs
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 200 ns  Iteration: 2  Instance: .processorTb.L1.RAMs
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 260 ns  Iteration: 2  Instance: .processorTb.L1.RAMs
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 480 ns  Iteration: 4  Instance: .processorTb.L1.Reg
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 480 ns  Iteration: 4  Instance: .processorTb.L1.Reg
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 480 ns  Iteration: 5  Instance: .processorTb.L1.AddrAdd
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 500 ns  Iteration: 2  Instance: .processorTb.L1.RAMs
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 500 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 520 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 540 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 560 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 580 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 600 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 620 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 640 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 660 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 680 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 700 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 720 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 740 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 760 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 780 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 800 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 820 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 840 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# ** Warning: There is an 'U'|'X'|'W'|'Z'|'-' in an arithmetic operand, the result will be 'X'(es).
+#    Time: 860 ns  Iteration: 3  Instance: .processorTb.L1.AddrAdd
+# End time: 21:23:02 on Feb 14,2016, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 36
