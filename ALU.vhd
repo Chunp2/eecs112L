@@ -3,8 +3,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 ---use IEEE.STD_LOGIC_ARITH.ALL;
 --use IEEE.STD_LOGIC_UNSIGNED.ALL;
---hi
-
+--test comment 
+--today 3-2-16
 ENTITY alu IS
 	PORT(
 		Func_in		: IN	std_logic_vector(5 DOWNTO 0);
