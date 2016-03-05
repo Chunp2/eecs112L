@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 entity ExecutionRegister is
-	Port(
+	Port(  
 		clk                      : IN  std_logic;
 		--control path
 		--control bits from the Controller
