@@ -1,0 +1,43 @@
+112L Component List
+Tony's Instructions:
+Each person is going to pick one of the stage and port map all of the components together. Make sure that you also include the stage register 
+(i.e the executionRegister, decodeRegister, etc..). Once we've finished portmapping the individual stages we can move on to implementing the
+the hazard unit for forwarding. Our finished processor will just be these 4 port mapped stages ported together along with the hazard unit. 
+
+Please work on it early, we only have a week now. If you have any questions about how these components fit together please ask me or Ivan soon. 
+
+
+Fetch Cycle:
+InstructionMemory
+PC 
+PCPLus4 - adds pc by 1 (not 4 because we word addressable not byte)
+
+
+Decode Cycle:
+Controller
+Decoder
+Concatinator    -Calculates jump address from instruction code and the PC+4
+LoadCtrlReg - Logic placed after the Register in order to convert values for hafl words/bytes operations
+regfile - the register file
+
+Execution Cycle:
+ALU
+BranchAndGate - Checks controller and ALU outputs to set the branch control that tells the processor to branch to branch Address
+MUXBranchOrNot - input is branch address or the PC+4. Decides which address will be the branch address.
+ALUFunc -Sets some more control bits based off of some controller values
+MUXJumpRegOrOffset  - Picks Jump address as either a register value or instruction memory offset
+SignExtender - Takes immediate value and make it 32 bits
+AddressAdder  - Creates the branch address from the PC+4 and the instruction code offset value
+RegALU  - Chooses whether to output the Register Data 2 or extended Immediate to the ALU
+InstructionRegFile - Chooses whether the register write address is RegDest or RegTarget
+ShiftExtend - extends the Shamt parameter to 32 bits 
+ShiftMux - chooses between Shift amount or LoadCtrlReg output as the input to the ALU
+JUIExtender - extends the immValue to 32 bits but the 16 immediate is now the MSB, not LSB
+
+WriteBack Cycle: 
+dataMemory      
+MUXJumpOrBranch - input is the jump address and the branch address/PC+4 (depends on what was chosen from above MUX). Decides whether to use branch or jump address (or neither ie PC+4)
+LoadCtrlRam - Logic placed after the RAM in order to convert values for half words/bytes operations
+countUpdateLogic - uses jump and branch control bits to know whether the PC should be updated or just incremented
+wdataMUX - chooses what to write into the register, JUI commmand, JAL commands, or the normal writeback value
+AfterRamMux - Chooses between dataMemory output or ALU results. Feeds into writeback
