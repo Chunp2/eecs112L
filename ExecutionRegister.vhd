@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 entity ExecutionRegister is
-	Port(  
+	Port(
 		clk                      : IN  std_logic;
 		--control path
 		--control bits from the Controller
@@ -16,6 +16,7 @@ entity ExecutionRegister is
 		Jump                     : IN  std_logic;
 		ShiftContr               : IN  std_logic;
 		wdataContr               : IN  std_logic_vector(1 downto 0);
+		opSelect                 : IN  std_logic_vector(5 downto 0);
 		--RegDst                  : IN  std_logic; used already
 		--ALUSrc                  : IN  std_logic; used already
 
@@ -30,6 +31,8 @@ entity ExecutionRegister is
 		RData2                   : IN  std_logic_vector(4 downto 0);
 		RegisterWriteAddress     : IN  std_logic_vector(4 downto 0);
 		NewPC                    : IN  std_logic_vector(31 downto 0);
+		JumpAddress              : IN  std_logic_vector(31 downto 0);
+		BranchAddress            : IN  std_logic_vector(31 downto 0);
 
 		-----------------------OUTPUT SIGNALS----------------------
 		OUT_MemRead              : OUT std_logic;
@@ -44,11 +47,13 @@ entity ExecutionRegister is
 		OUT_JRControl            : OUT std_logic;
 		OUT_ALUFunc              : OUT std_logic_vector(5 downto 0);
 		OUT_countUpdate          : OUT std_logic;
+		OUT_opSelect             : OUT std_logic_vector(5 downto 0);
 
 		OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
 		OUT_RData2               : OUT std_logic_vector(4 downto 0);
 		OUT_RegisterWriteAddress : OUT std_logic_vector(4 downto 0);
-		OUT_NewPC                : OUT std_logic_vector(31 downto 0)
+		OUT_JumpAddress          : OUT std_logic_vector(31 downto 0);
+		OUT_BranchAdress         : OUT std_logic_vector(31 downto 0)
 	);
 end entity;
 
@@ -69,11 +74,13 @@ begin
 			OUT_JRControl   <= JRControl;
 			OUT_ALUFunc     <= ALUFunc;
 			OUT_countUpdate <= countUpdate;
+			OUT_opSelect    <= opSelect;
 
 			OUT_ALUResult            <= ALUResult;
 			OUT_RData2               <= RData2;
 			OUT_RegisterWriteAddress <= RegisterWriteAddress;
-			OUT_NewPC                <= NewPc;
+			OUT_JumpAddress          <= JumpAddress;
+			OUT_BranchAdress         <= BranchAddress;
 		end if;
 	end process;
 end architecture;

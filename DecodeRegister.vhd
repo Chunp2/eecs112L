@@ -19,6 +19,7 @@ entity DecodeRegister is
 		Jump                    : IN  std_logic;
 		ShiftContr              : IN  std_logic;
 		wdataContr              : IN  std_logic_vector(1 downto 0);
+		opSelect                : IN  std_logic_vector(5 downto 0);
 		--control bits from ALUFunc
 		JRControl               : IN  std_logic;
 		ALUFunc                 : IN  std_logic_vector(5 downto 0);
@@ -50,6 +51,7 @@ entity DecodeRegister is
 		OUT_wdataContr          : OUT std_logic_vector(1 downto 0);
 		OUT_JRControl           : OUT std_logic;
 		OUT_ALUFunc             : OUT std_logic_vector(5 downto 0);
+		OUT_opSelect            : OUT std_logic_vector(5 downto 0);
 
 		--data entries out
 		OUT_RData1              : OUT std_logic_vector(31 downto 0);
@@ -68,20 +70,20 @@ begin
 	begin
 		if (rising_edge(clk)) then
 			--control bits out
-			OUT_RegDst     <= RegDst;
-			OUT_MemRead    <= MemRead;
-			OUT_MemtoReg   <= MemToReg;
-			OUT_ALUOp      <= ALUOp;
-			OUT_MemWrite   <= MemWrite;
-			OUT_ALUSrc     <= ALUSrc;
-			OUT_RegWrite   <= RegWrite;
-			OUT_Branch     <= Branch;
-			OUT_Jump       <= Jump;
-			OUT_ShiftContr <= ShiftContr;
-			OUT_wdataContr <= wdataContr;
-			OUT_JRControl  <= JRControl;
-			OUT_ALUFunc    <= ALUFunc;
-
+			OUT_RegDst              <= RegDst;
+			OUT_MemRead             <= MemRead;
+			OUT_MemtoReg            <= MemToReg;
+			OUT_ALUOp               <= ALUOp;
+			OUT_MemWrite            <= MemWrite;
+			OUT_ALUSrc              <= ALUSrc;
+			OUT_RegWrite            <= RegWrite;
+			OUT_Branch              <= Branch;
+			OUT_Jump                <= Jump;
+			OUT_ShiftContr          <= ShiftContr;
+			OUT_wdataContr          <= wdataContr;
+			OUT_JRControl           <= JRControl;
+			OUT_ALUFunc             <= ALUFunc;
+			OUT_opSelect            <= opSelect;
 			--data entries out
 			OUT_RData1              <= RData1;
 			OUT_RData2              <= RData2;
