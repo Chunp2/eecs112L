@@ -33,8 +33,10 @@ entity DecodeRegister is
 		RegTarget               : IN  std_logic_vector(4 downto 0);
 		ExtendedImmValue        : IN  std_logic_vector(31 downto 0);
 		ExtendedShiftAmount     : IN  std_logic_vector(31 downto 0);
+		ExtendedJUI             : IN  std_logic_vector(31 downto 0);
 		--data entry from PCPlus4
 		PCPlus4                 : IN  std_logic_vector(31 downto 0);
+		PC                      : IN  std_logic_vector(31 downto 0);
 
 		--------------------OUTPUTS-------------------------
 		--control bits out
@@ -60,7 +62,9 @@ entity DecodeRegister is
 		OUT_RegTarget           : OUT std_logic_vector(4 downto 0);
 		OUT_ExtendedImmValue    : OUT std_logic_vector(31 downto 0);
 		OUT_ExtendedShiftAmount : OUT std_logic_vector(31 downto 0);
-		OUT_PCPlus4             : OUT std_logic_vector(31 downto 0)
+		OUT_ExtendedJUI         : OUT std_logic_vector(31 downto 0);
+		OUT_PCPlus4             : OUT std_logic_vector(31 downto 0);
+		OUT_PC                  : OUT std_logic_vector(31 downto 0)
 	);
 end DecodeRegister;
 
@@ -91,7 +95,9 @@ begin
 			OUT_RegTarget           <= RegTarget;
 			OUT_ExtendedImmValue    <= ExtendedImmValue;
 			OUT_ExtendedShiftAmount <= ExtendedShiftAmount;
+			OUT_ExtendedJUI         <= ExtendedJUI;
 			OUT_PCPlus4             <= PCPlus4;
+			OUT_PC                  <= PC;
 		end if;
 	end process;
 end architecture;

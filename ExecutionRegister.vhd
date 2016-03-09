@@ -33,6 +33,8 @@ entity ExecutionRegister is
 		NewPC                    : IN  std_logic_vector(31 downto 0);
 		JumpAddress              : IN  std_logic_vector(31 downto 0);
 		BranchAddress            : IN  std_logic_vector(31 downto 0);
+		ExtendedJUI              : IN  std_logic_vector(31 downto 0);
+		PC                       : IN  std_logic_vector(31 downto 0);
 
 		-----------------------OUTPUT SIGNALS----------------------
 		OUT_MemRead              : OUT std_logic;
@@ -53,7 +55,9 @@ entity ExecutionRegister is
 		OUT_RData2               : OUT std_logic_vector(4 downto 0);
 		OUT_RegisterWriteAddress : OUT std_logic_vector(4 downto 0);
 		OUT_JumpAddress          : OUT std_logic_vector(31 downto 0);
-		OUT_BranchAdress         : OUT std_logic_vector(31 downto 0)
+		OUT_BranchAdress         : OUT std_logic_vector(31 downto 0);
+		OUT_ExtendedJUI          : OUT std_logic_vector(31 downto 0);
+		OUT_PC                   : OUT std_logic_vector(31 downto 0)
 	);
 end entity;
 
@@ -81,6 +85,8 @@ begin
 			OUT_RegisterWriteAddress <= RegisterWriteAddress;
 			OUT_JumpAddress          <= JumpAddress;
 			OUT_BranchAdress         <= BranchAddress;
+			OUT_ExtendedJUI          <= ExtendedJUI;
+			OUT_PC                   <= PC;
 		end if;
 	end process;
 end architecture;
