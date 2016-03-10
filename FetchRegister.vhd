@@ -7,6 +7,7 @@ use ieee.numeric_std.all;
 entity FetchRegister is
 	Port(
 		clk           : IN  std_logic;
+		enable        : IN  std_logic;
 
 		--From decoder into register
 		opSelect      : IN  std_logic_vector(5 downto 0);
@@ -33,13 +34,15 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			OUT_opSelect  <= opSelect;
-			OUT_regSource <= regSource;
-			OUT_regTarget <= regTarget;
-			OUT_regDest   <= regDest;
-			OUT_func      <= func;
-			OUT_immValue  <= immValue;
-			OUT_PCPlus4   <= PCPlus4;
+			if enable=1 then
+				OUT_opSelect  <= opSelect;
+				OUT_regSource <= regSource;
+				OUT_regTarget <= regTarget;
+				OUT_regDest   <= regDest;
+				OUT_func      <= func;
+				OUT_immValue  <= immValue;
+				OUT_PCPlus4   <= PCPlus4;
+			end if;
 		end if;
 	end process;
 end behavior;
