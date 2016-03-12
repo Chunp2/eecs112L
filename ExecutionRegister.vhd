@@ -47,7 +47,6 @@ entity ExecutionRegister is
 		OUT_ShiftContr           : OUT std_logic;
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 		OUT_JRControl            : OUT std_logic;
-		OUT_ALUFunc              : OUT std_logic_vector(5 downto 0);
 		OUT_countUpdate          : OUT std_logic;
 		OUT_opSelect             : OUT std_logic_vector(5 downto 0);
 
@@ -76,7 +75,6 @@ begin
 			OUT_ShiftContr  <= ShiftContr;
 			OUT_wdataContr  <= wdataContr;
 			OUT_JRControl   <= JRControl;
-			OUT_ALUFunc     <= ALUFunc;
 			OUT_countUpdate <= countUpdate;
 			OUT_opSelect    <= opSelect;
 
