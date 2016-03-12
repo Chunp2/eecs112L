@@ -50,7 +50,7 @@ architecture behavior of writeBackCycle is
 			 dataI : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
 			 dataO : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
 	end component dataMemory;
-
+	
 	component MUX32bit
 		port(high     : IN  std_logic_vector(31 downto 0);
 			 low      : IN  std_logic_vector(31 downto 0);

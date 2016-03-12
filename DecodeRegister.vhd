@@ -5,6 +5,7 @@ use ieee.numeric_std.all;
 entity DecodeRegister is
 	Port(
 		clk                     : IN  std_logic;
+		flush					: IN  std_logic;
 		------------------INPUTS---------------------
 		--control path entries
 		--control bits from the controller
@@ -73,31 +74,48 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			--control bits out
-			OUT_RegDst              <= RegDst;
-			OUT_MemRead             <= MemRead;
-			OUT_MemtoReg            <= MemToReg;
-			OUT_ALUOp               <= ALUOp;
-			OUT_MemWrite            <= MemWrite;
-			OUT_ALUSrc              <= ALUSrc;
-			OUT_RegWrite            <= RegWrite;
-			OUT_Branch              <= Branch;
-			OUT_Jump                <= Jump;
-			OUT_ShiftContr          <= ShiftContr;
-			OUT_wdataContr          <= wdataContr;
-			OUT_JRControl           <= JRControl;
-			OUT_ALUFunc             <= ALUFunc;
-			OUT_opSelect            <= opSelect;
-			--data entries out
-			OUT_RData1              <= RData1;
-			OUT_RData2              <= RData2;
-			OUT_RegDestination      <= Regdestination;
-			OUT_RegTarget           <= RegTarget;
-			OUT_ExtendedImmValue    <= ExtendedImmValue;
-			OUT_ExtendedShiftAmount <= ExtendedShiftAmount;
-			OUT_ExtendedJUI         <= ExtendedJUI;
-			OUT_PCPlus4             <= PCPlus4;
-			OUT_PC                  <= PC;
+			if flush=0 then
+				--control bits out
+				OUT_RegDst              <= RegDst;
+				OUT_MemRead             <= MemRead;
+				OUT_MemtoReg            <= MemToReg;
+				OUT_ALUOp               <= ALUOp;
+				OUT_MemWrite            <= MemWrite;
+				OUT_ALUSrc              <= ALUSrc;
+				OUT_RegWrite            <= RegWrite;
+				OUT_Branch              <= Branch;
+				OUT_Jump                <= Jump;
+				OUT_ShiftContr          <= ShiftContr;
+				OUT_wdataContr          <= wdataContr;
+				OUT_JRControl           <= JRControl;
+				OUT_ALUFunc             <= ALUFunc;
+				OUT_opSelect            <= opSelect;
+				--data entries out
+				OUT_RData1              <= RData1;
+				OUT_RData2              <= RData2;
+				OUT_RegDestination      <= Regdestination;
+				OUT_RegTarget           <= RegTarget;
+				OUT_ExtendedImmValue    <= ExtendedImmValue;
+				OUT_ExtendedShiftAmount <= ExtendedShiftAmount;
+				OUT_ExtendedJUI         <= ExtendedJUI;
+				OUT_PCPlus4             <= PCPlus4;
+				OUT_PC                  <= PC;
+			else
+				OUT_RegDst              <= 0;
+				OUT_MemRead             <= 0;
+				OUT_MemtoReg            <= 0;
+				OUT_ALUOp               <= "00000";  
+				OUT_MemWrite            <= 0;
+				OUT_ALUSrc              <= 0;
+				OUT_RegWrite            <= 0;
+				OUT_Branch              <= 0;
+				OUT_Jump                <= 0;
+				OUT_ShiftContr          <= 0;
+				OUT_wdataContr          <= "00"; 
+				OUT_JRControl           <= 0;
+				OUT_ALUFunc             <= "000000";
+				OUT_opSelect            <= "000000";
+			end if;
 		end if;
 	end process;
 end architecture;

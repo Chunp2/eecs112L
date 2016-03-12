@@ -20,7 +20,7 @@ begin
 			wdata <= NormalInput;
 		elsif (selector="01") then --LUI input
 			wdata <= JUIInput;
-		else --JAL input
+		elseif (selector="10") then --JAL input
 			wdata <= JALInput;
 		end if;
 	end process;
