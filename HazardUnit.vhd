@@ -6,8 +6,10 @@ entity HazardUnit is
 	Port(
 		--logic control inputs--
 		WriteRegM   : IN  std_logic;
+		RegWriteE	: IN  std_logic;
 		RegWriteM   : IN  std_logic;
 		RegWriteW   : IN  std_logic;
+		MemToRegM	: IN  std_logic;
 		MemRead     : IN  std_logic;
 		Branch		: IN  std_logic;
 
@@ -16,6 +18,7 @@ entity HazardUnit is
 		RegSourceF  : IN  std_logic_vector(5 downto 0);
 		RegTargetF  : IN  std_logic_vector(5 downto 0);
 
+		RegDestE	: IN  std_logic_vector(5 downto 0);
 		RegDestW    : IN  std_logic_vector(5 downto 0);
 		RegDestM    : IN  std_logic_vector(5 downto 0);
 
@@ -55,7 +58,15 @@ begin
 			end if;
 		--stall for branches
 		elsif (Branch = 1) then
-			
+			if (RegWriteE AND ((RegSourceD=RegDestE) OR (RegTargetD=RegDestE)) then 
+				DecodeFlush <= 1;
+				FetchStall  <= 1;
+				PCStall     <= 1;
+			elsif (MemToRegM) AND ((RegSourceD=RegDestM) OR (RegTargetD=RegDestM)) then
+				DecodeFlush <= 1;
+				FetchStall  <= 1;
+				PCStall     <= 1;
+			end if;
 		--No hazard, reset all control bits	
 		else
 			ForwardAE   <= "00";

@@ -28,7 +28,7 @@ entity ExecutionRegister is
 
 		------------------------DATA PATH-------------------------
 		ALUResult                : IN  std_logic_vector(31 downto 0);
-		RData2                   : IN  std_logic_vector(4 downto 0);
+		RData2                   : IN  std_logic_vector(31 downto 0);
 		RegisterWriteAddress     : IN  std_logic_vector(4 downto 0);
 		NewPC                    : IN  std_logic_vector(31 downto 0);
 		JumpAddress              : IN  std_logic_vector(31 downto 0);
@@ -52,7 +52,7 @@ entity ExecutionRegister is
 		OUT_opSelect             : OUT std_logic_vector(5 downto 0);
 
 		OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
-		OUT_RData2               : OUT std_logic_vector(4 downto 0);
+		OUT_RData2               : OUT std_logic_vector(31 downto 0);
 		OUT_RegisterWriteAddress : OUT std_logic_vector(4 downto 0);
 		OUT_JumpAddress          : OUT std_logic_vector(31 downto 0);
 		OUT_BranchAdress         : OUT std_logic_vector(31 downto 0);
