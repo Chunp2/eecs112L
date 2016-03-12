@@ -21,7 +21,7 @@ entity ExecutionCycle is
 		ShiftContr    : IN std_logic;
 		wdataContr    : IN std_logic_vector(1 downto 0);
 		JRControl     : IN std_logic;
-		ALUFunc       : IN std_logic_vector(5 downto 0);
+		ALUFunc       : IN std_logic_vector(5 downto 0);--
 		opSelect      : IN std_logic_vector(5 downto 0);
 		------------data path-----------------
 		ForwardedALUM 		: IN std_logic_vector(31 downto 0); --ALUOutput from one cycle ahead
@@ -209,6 +209,9 @@ architecture behavior of ExecutionCycle is
 	signal ForwardAOut : std_logic_vector(31 downto 0);
 	--signal out of ForwardB--
 	signal ForwardBOut : std_logic_vector(31 downto 0);
+	signal Out_Adder : std_logic_vector(31 downto 0);
+	signal ALU_Branch_Out : std_logic;
+	signal Out_BranchAndGate : std_logic;
 
 begin
 	ForwardA : component MUX3to1
@@ -230,30 +233,30 @@ begin
 	ALU : component alu 
 		port map(
 			Func_in		=>
-			A_in		=>
+			A_in		=> ForwardAOut,
 			B_in		=>
 			O_out		=>
-			Branch_out	=>
+			Branch_out	=> ALU_Branch_Out
 	);
 	BranchAndGate : component ANDGate 
 		Port map(
-			Ain	=>
-			Bin 	=>
-			Cout	=>
+			Ain	=> Branch,
+			Bin 	=> ALU_Branch_Out,
+			Cout	=> Out_BranchAndGate
 		);
 	ALUFunc : component ALUFunc is
 		Port map(
-			ALUOp		=>
-			FuncField	=>
-			JRControl	=>
-			ShiftContr	=>
-			out_put		=>
+			ALUOp		=> ALUOp,
+			FuncField	=> ALUFunc,
+			JRControl	=> JRControl,
+			ShiftContr	=> ShiftContr,
+			out_put		=> --to where
 		);
 	MUXBranchOrNot : component MUX32bit is
 		Port map(
-			high		=>
-			low		=>
-			selector	=>
+			high		=> Out_Adder,
+			low		=> PCPlus4,
+			selector	=> Out_BranchAndGate, --out of branchandgate
 			out_put		=>
 		);
 	MUXJumpRegOrOffset : component MUX32bit is
@@ -265,8 +268,8 @@ begin
 		);
 	RegALU : component MUX32bit is
 		Port map(
-			high		=>
-			low		=>
+			high		=> RData2, 
+			low		=> ExtendedImmValue,
 			selector	=>
 			out_put		=>
 		);
@@ -284,15 +287,15 @@ begin
 		);
 	address adder : component adder is
 		Port map(
-			A_in		=>
-			B_in		=>
-			O_out		=>
+			A_in		=> PCPlus4,
+			B_in		=> ExtendedImmValue,
+			O_out		=> Out_Adder
 		);
 	InstructionRegFile : component MUX5bit is
 		Port map(
-			high		=>
-			low		=>
-			selector	=>
+			high		=> RegDestination,
+			low		=> RegTarget,
+			selector	=> ALUSrc,
 			out_put		=>
 		);
 	ShiftExtend : component ShiftExtender is
@@ -310,56 +313,55 @@ begin
 		clk                      =>
 		--control path
 		--control bits from the Controller
-		MemRead                  =>
-		MemtoReg                 =>
-		ALUOp                    =>
-		MemWrite                 =>
-		RegWrite                 =>
-		Branch                   =>
-		Jump                     =>
-		ShiftContr               =>
-		wdataContr               =>
-		opSelect                 =>
+		MemRead                  => MemRead,
+		MemtoReg                 => MemtoReg,
+		ALUOp                    => ALUOp,
+		MemWrite                 => MemWrite,
+		RegWrite                 => RegWrite,
+		Branch                   => Branch,
+		Jump                     => Jump,
+		ShiftContr               => ShiftContr,
+		wdataContr               => wdataContr,
+		opSelect                 => opSelect,
 		--RegDst                  : IN  std_logic; used already
 		--ALUSrc                  : IN  std_logic; used already
 
 		--control bits from ALUFunc
-		JRControl                =>
+		JRControl                => JRControl,
 		ALUFunc                  =>
 		--control bits from branch/jump Path
 		countUpdate              =>
 
 		------------------------DATA PATH-------------------------
 		ALUResult                =>
-		RData2                   =>
+		RData2                   => RData2,
 		RegisterWriteAddress     =>
 		NewPC                    =>
 		JumpAddress              =>
 		BranchAddress            =>
-		ExtendedJUI              =>
-		PC                       =>
+		ExtendedJUI              => ExtendedJUI
+		PC                       => PC
 
 		-----------------------OUTPUT SIGNALS----------------------
-		OUT_MemRead              =>
-		OUT_MemtoReg             =>
-		OUT_ALUOp                =>
-		OUT_MemWrite             =>
-		OUT_RegWrite             =>
-		OUT_Branch               =>
-		OUT_Jump                 =>
-		OUT_ShiftContr           =>
-		OUT_wdataContr           =>
-		OUT_JRControl            =>
-		OUT_ALUFunc              =>
-		OUT_countUpdate          =>
-		OUT_opSelect             =>
+		OUT_MemRead              => OUT_MemRead,
+		OUT_MemtoReg             => OUT_MemtoReg,
+		OUT_ALUOp                => OUT_ALUOp,
+		OUT_MemWrite             => OUT_MemWrite,
+		OUT_RegWrite             => OUT_RegWrite,
+		OUT_Branch               => OUT_Branch,
+		OUT_Jump                 => OUT_Jump,
+		OUT_ShiftContr           => OUT_ShiftContr,
+		OUT_wdataContr           => OUT_wdataContr,
+		OUT_JRControl            => OUT_JRControl,
+		OUT_countUpdate          => OUT_countUpdate,
+		OUT_opSelect             => OUT_opSelect,
 
-		OUT_ALUResult            =>
-		OUT_RData2               =>
-		OUT_RegisterWriteAddress =>
-		OUT_JumpAddress          =>
-		OUT_BranchAdress         =>
-		OUT_ExtendedJUI          =>
-		OUT_PC                   =>
+		OUT_ALUResult            => OUT_ALUResult,
+		OUT_RData2               => OUT_RData2,
+		OUT_RegisterWriteAddress => OUT_RegisterWriteAddress,
+		OUT_JumpAddress          => OUT_JumpAddress,
+		OUT_BranchAdress         => OUT_BranchAddress,
+		OUT_ExtendedJUI          => OUT_ExtendedJUI,
+		OUT_PC                   => OUT_PC
 	);
 end architecture;
