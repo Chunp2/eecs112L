@@ -110,7 +110,6 @@ architecture behavior of ExecutionCycle is
 		OUT_ShiftContr           : OUT std_logic;
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 		OUT_JRControl            : OUT std_logic;
-		OUT_ALUFunc              : OUT std_logic_vector(5 downto 0);
 		OUT_countUpdate          : OUT std_logic;
 		OUT_opSelect             : OUT std_logic_vector(5 downto 0);
 
