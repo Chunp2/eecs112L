@@ -154,6 +154,16 @@ architecture behavior of decode_stage is
 		);
 	end component;
 -------------------------------------------------------------------
+	component ShiftExtender
+		port(Instr16down   : IN  std_logic_vector(15 downto 0);
+			 ExtendedShamt : OUT std_logic_vector(31 downto 0));
+	end component ShiftExtender;
+-------------------------------------------------------------------
+	component JUIExtender
+		port(Instr16down : IN  std_logic_vector(15 downto 0);
+			 UpperImm    : OUT std_logic_vector(31 downto 0));
+	end component JUIExtender;
+-------------------------------------------------------------------
 	component FetchRegister is
 	Port(
 		clk           : IN  std_logic;
@@ -220,6 +230,16 @@ begin
 					out_put  => out_JumpAddr
 
 				);
+	ShiftExtend: component ShiftExtender
+		port map(
+			Instr16down   => immValue,
+			ExtendedShamt => ExtendedShiftAmount,
+		); 
+	JUIExtend: component JUIExtender
+		port map(
+			Instr16down => immValue,
+			UpperImm    => ExtendedJUI
+		);
 	
 	Control:Controller 	Port map(			
 				rt		=> regTarget,
