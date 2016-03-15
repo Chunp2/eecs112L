@@ -89,8 +89,8 @@ architecture behavior of writeBackCycle is
 			 out_ALUoutW         : out std_logic_vector(31 downto 0);
 			 out_ReadDataW       : out std_logic_vector(31 downto 0);
 			 out_writeReg        : out STD_LOGIC_VECTOR(4 DOWNTO 0);
-			 out_newPC           : out std_logic_vector(31 downto 0);
-	end component writeRegister;
+			 out_newPC           : out std_logic_vector(31 downto 0));
+	end component;
 	--===========================SIGNALS============================--
 	--SIGNALS OUT OF DATAMEMORY--
 	signal RAMOUT          : std_logic_vector(31 downto 0);
@@ -162,6 +162,6 @@ begin
 			out_ALUoutW         => out_ALUoutW,
 			out_ReadDataW       => out_ReadDataW,
 			out_writeReg        => out_writeReg,
-			out_newPC           => out_newPC,
+			out_newPC           => out_newPC
 		);
 end behavior;

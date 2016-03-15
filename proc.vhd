@@ -5,8 +5,7 @@ use ieee.numeric_std.all;
 entity proc is
 	Port(
 		clk   : IN std_logic;
-		reset : IN std_logic;
-
+		reset : IN std_logic
 	);
 end entity;
 
@@ -193,7 +192,7 @@ architecture behavior of proc is
 	signal ExtendedImmValueD                  : std_logic_vector(31 downto 0);
 	signal ExtendedJUID                       : std_logic_vector(31 downto 0);
 	signal ExtendedShamtD                     : std_logic_vector(31 downto 0);
-	signal opSelectE						  : std_logic_vector(4 downto 0);
+	signal opSelectE                          : std_logic_vector(4 downto 0);
 	signal regDestControlD                    : std_logic;
 	--signals out of Execution Cycle
 	signal MemReadE, MemToRegE, MemWriteE     : std_logic;
@@ -208,7 +207,13 @@ architecture behavior of proc is
 	signal ExtendedJUIE                       : std_logic_vector(31 downto 0);
 	signal PCE                                : std_logic_vector(31 downto 0);
 	--signals out of WriteBack Cycle
-	signal 
+	signal regWriteW, MemToRegW               : std_logic;
+	signal PCUpdateControlW                   : std_logic;
+	signal ALUOutW                            : std_logic_vector(31 downto 0);
+	signal ReadDataW                          : std_logic_vector(31 downto 0);
+	signal RegDestW                           : std_logic_vector(4 downto 0);
+	signal PCPlus4W                           : std_logic_vector(31 downto 0);
+	signal FinalWriteData                     : std_logic_vector(31 downto 0);
 
 begin
 	Fetch : component FetchCycle
@@ -305,7 +310,7 @@ begin
 			OUT_RegWrite             => RegWriteE,
 			OUT_Branch               => BranchE,
 			OUT_Jump                 => JumpE,
-			OUT_opSelect			 => opSelectE,
+			OUT_opSelect             => opSelectE,
 			OUT_wdataContr           => wdataContrE,
 			OUT_ALUResult            => ALUResultE,
 			OUT_RData2               => RData2E,
@@ -334,13 +339,13 @@ begin
 			BranchAddress        => BranchAddressE,
 			ExtendedJUI          => ExtendedJUIE,
 			PC                   => PCE,
-			out_regWrite         => out_regWrite,
-			out_memtoRegW        => out_memtoRegW,
-			out_PCUpdateControl  => out_PCUpdateControl,
-			out_ALUoutW          => out_ALUoutW,
-			out_ReadDataW        => out_ReadDataW,
-			out_writeReg         => out_writeReg,
-			out_newPC            => out_newPC,
+			out_regWrite         => regWriteW,
+			out_memtoRegW        => memtoRegW,
+			out_PCUpdateControl  => PCUpdateControlW,
+			out_ALUoutW          => ALUoutW,
+			out_ReadDataW        => ReadDataW,
+			out_writeReg         => RegDestW,
+			out_newPC            => PCPlus4W,
 			FinalWriteData       => FinalWriteData
 		);
 	Hazard : component HazardUnit
