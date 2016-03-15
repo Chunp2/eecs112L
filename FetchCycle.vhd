@@ -7,7 +7,6 @@ entity FetchCycle is
 		clk                : IN  std_logic;
 		enable             : IN  std_logic;
 		newPC              : IN  std_logic_vector(31 downto 0);
-		PCUpdateControl    : IN  std_logic;
 		countUpdateWBCycle : IN  std_logic;
 
 		OUT_opSelect       : OUT std_logic_vector(5 downto 0);

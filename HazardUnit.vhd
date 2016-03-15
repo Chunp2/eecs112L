@@ -5,7 +5,6 @@ use ieee.numeric_std.all;
 entity HazardUnit is
 	Port(
 		--logic control inputs--
-		WriteRegM   : IN  std_logic;
 		RegWriteE	: IN  std_logic;
 		RegWriteM   : IN  std_logic;
 		RegWriteW   : IN  std_logic;
@@ -27,7 +26,7 @@ entity HazardUnit is
 		ForwardAE   : OUT std_logic_vector(1 downto 0) := "00";
 		DecodeFlush : OUT std_logic                    := 0;
 		FetchStall  : OUT std_logic                    := 0;
-		PCStall     : OUT std_logic                    := 0;
+		PCStall     : OUT std_logic                    := 0
 	);
 end HazardUnit;
 
@@ -58,7 +57,7 @@ begin
 			end if;
 		--stall for branches
 		elsif (Branch = 1) then
-			if (RegWriteE AND ((RegSourceD=RegDestE) OR (RegTargetD=RegDestE)) then 
+			if (RegWriteE AND ((RegSourceD=RegDestE) OR (RegTargetD=RegDestE))) then 
 				DecodeFlush <= 1;
 				FetchStall  <= 1;
 				PCStall     <= 1;

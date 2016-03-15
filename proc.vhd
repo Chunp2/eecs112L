@@ -5,14 +5,14 @@ use ieee.numeric_std.all;
 entity proc is
 	Port(
 		clk   : IN std_logic;
-		reset : IN std_logic
+		reset : IN std_logic;
+		enable : IN std_logic
 	);
 end entity;
 
 architecture behavior of proc is
 	component HazardUnit
-		port(WriteRegM   : IN  std_logic;
-			 RegWriteE   : IN  std_logic;
+		port(RegWriteE   : IN  std_logic;
 			 RegWriteM   : IN  std_logic;
 			 RegWriteW   : IN  std_logic;
 			 MemToRegM   : IN  std_logic;
@@ -143,15 +143,11 @@ architecture behavior of proc is
 		port(clk                  : IN  std_logic;
 			 MemRead              : IN  std_logic;
 			 MemtoReg             : IN  std_logic;
-			 ALUOp                : IN  std_logic_vector(4 downto 0);
 			 MemWrite             : IN  std_logic;
 			 RegWrite             : IN  std_logic;
 			 Branch               : IN  std_logic;
 			 Jump                 : IN  std_logic;
-			 ShiftContr           : IN  std_logic;
 			 wdataContr           : IN  std_logic_vector(1 downto 0);
-			 JRControl            : IN  std_logic;
-			 countUpdate          : IN  std_logic;
 			 opSelect             : IN  std_logic_vector(5 downto 0);
 			 ALUResult            : IN  std_logic_vector(31 downto 0);
 			 RData2               : IN  std_logic_vector(31 downto 0);
@@ -167,6 +163,7 @@ architecture behavior of proc is
 			 out_ReadDataW        : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 			 out_writeReg         : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
 			 out_newPC            : OUT std_logic_vector(31 downto 0);
+			 HazardForwarded	  : OUT std_logic_vector(31 downto 0);
 			 FinalWriteData       : OUT std_logic_vector(31 downto 0));
 	end component writeBackCycle;
 	--signals out of Fetch Cycle
@@ -213,16 +210,19 @@ architecture behavior of proc is
 	signal ReadDataW                          : std_logic_vector(31 downto 0);
 	signal RegDestW                           : std_logic_vector(4 downto 0);
 	signal PCPlus4W                           : std_logic_vector(31 downto 0);
+	signal HazardForwardedW                   : std_logic_vector(31 downto 0);
 	signal FinalWriteData                     : std_logic_vector(31 downto 0);
+	--signals out of HazardUnit
+	signal ForwardAE, ForwardBE               : std_logic_vector(1 downto 0);
+	signal DecodeFlush, FetchStall, PCStall   : std_logic;
 
 begin
 	Fetch : component FetchCycle
 		port map(
 			clk                => clk,
 			enable             => enable,
-			newPC              => out_newPC,
-			PCUpdateControl    => out_PCUpdateControl,
-			countUpdateWBCycle => countUpdateWBCycle,
+			newPC              => PCPlus4W,
+			countUpdateWBCycle => PCUpdateControlW,
 			OUT_opSelect       => opSelectF,
 			OUT_regSource      => regSourceF,
 			OUT_regTarget      => regTargetF,
@@ -236,7 +236,7 @@ begin
 	Decode : component DecodeCycle
 		port map(
 			clk                     => clk,
-			flush                   => flush,
+			flush                   => decodeFlush,
 			reset                   => reset,
 			instruction             => instructionF,
 			opSelect                => opSelectF,
@@ -247,7 +247,7 @@ begin
 			immValue                => immValueF,
 			PCPlus4                 => PCPlus4F,
 			finalWriteData          => finalWriteData,
-			regWrite                => regWrite,
+			regWrite                => regWriteW,
 			out_PCPlus4             => PCPlus4D,
 			out_PC                  => PCD,
 			out_RegDst              => regDestControlD,
@@ -293,11 +293,11 @@ begin
 			JRControl                => JRControlD,
 			ALUFunc                  => ALUFuncD,
 			opSelect                 => opSelectD,
-			ForwardedALUM            => ForwardedALUM,
-			ForwardedALUW            => ForwardedALUW,
+			ForwardedALUM            => ALUResultE,
+			ForwardedALUW            => HazardForwardedW,
 			RData1                   => RData1D,
 			RData2                   => RData2D,
-			RegDestination           => RegDestinationD,
+			RegDestination           => RegDestD,
 			RegTarget                => RegTargetD,
 			ExtendedImmValue         => ExtendedImmValueD,
 			ExtendedShiftAmount      => ExtendedShamtD,
@@ -346,24 +346,24 @@ begin
 			out_ReadDataW        => ReadDataW,
 			out_writeReg         => RegDestW,
 			out_newPC            => PCPlus4W,
+			HazardForwarded      => HazardForwardedW,
 			FinalWriteData       => FinalWriteData
 		);
 	Hazard : component HazardUnit
 		port map(
-			WriteRegM   => WriteRegM,
-			RegWriteE   => RegWriteE,
-			RegWriteM   => RegWriteM,
+			RegWriteE   => RegWriteD,
+			RegWriteM   => RegWriteE,
 			RegWriteW   => RegWriteW,
-			MemToRegM   => MemToRegM,
-			MemRead     => MemRead,
-			Branch      => Branch,
+			MemToRegM   => MemToRegE,
+			MemRead     => MemReadE,
+			Branch      => BranchE,
 			RegSourceD  => RegSourceD,
 			RegTargetD  => RegTargetD,
 			RegSourceF  => RegSourceF,
 			RegTargetF  => RegTargetF,
-			RegDestE    => RegDestE,
+			RegDestE    => RegDestD,
 			RegDestW    => RegDestW,
-			RegDestM    => RegDestM,
+			RegDestM    => RegDestinationE,
 			ForwardBE   => ForwardBE,
 			ForwardAE   => ForwardAE,
 			DecodeFlush => DecodeFlush,

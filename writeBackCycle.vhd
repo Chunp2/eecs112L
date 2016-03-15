@@ -34,6 +34,7 @@ entity writeBackCycle is
 		out_ReadDataW        : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		out_writeReg         : OUT STD_LOGIC_VECTOR(4 DOWNTO 0);
 		out_newPC            : OUT std_logic_vector(31 downto 0);
+		HazardForwarded		 : OUT std_logic_vector(31 downto 0);
 		FinalWriteData       : OUT std_logic_vector(31 downto 0)
 	);
 end writeBackCycle;
@@ -164,4 +165,5 @@ begin
 			out_writeReg        => out_writeReg,
 			out_newPC           => out_newPC
 		);
+	HazardForwarded <= tier2Writedata;
 end behavior;
