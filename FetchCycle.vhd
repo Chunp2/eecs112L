@@ -4,25 +4,20 @@ use ieee.numeric_std.all;
 
 entity FetchCycle is
 	Port(
-		clk                 : IN  std_logic;
-		out_newPC           : IN  std_logic_vector(31 downto 0);
-		out_PCUpdateControl : IN  std_logic;
-		countUpdateWBCycle  : IN  std_logic;
+		clk                : IN  std_logic;
+		enable             : IN  std_logic;
+		newPC              : IN  std_logic_vector(31 downto 0);
+		PCUpdateControl    : IN  std_logic;
+		countUpdateWBCycle : IN  std_logic;
 
-		opSelect            : OUT std_logic_vector(5 downto 0);
-		regSource           : OUT std_logic_vector(4 downto 0);
-		regTarget           : OUT std_logic_vector(4 downto 0);
-		regDest             : OUT std_logic_vector(4 downto 0);
-		func                : OUT std_logic_vector(5 downto 0);
-		immValue            : OUT std_logic_vector(15 downto 0);
-		PCPlus4D            : OUT std_logic_vector(31 downto 0);
-		OUT_opSelect        : OUT std_logic_vector(5 downto 0);
-		OUT_regSource       : OUT std_logic_vector(4 downto 0);
-		OUT_regTarget       : OUT std_logic_vector(4 downto 0);
-		OUT_regDest         : OUT std_logic_vector(4 downto 0);
-		OUT_func            : OUT std_logic_vector(5 downto 0);
-		OUT_immValue        : OUT std_logic_vector(15 downto 0);
-		OUT_PCPlus4         : OUT std_logic_vector(31 downto 0)
+		OUT_opSelect       : OUT std_logic_vector(5 downto 0);
+		OUT_regSource      : OUT std_logic_vector(4 downto 0);
+		OUT_regTarget      : OUT std_logic_vector(4 downto 0);
+		OUT_regDest        : OUT std_logic_vector(4 downto 0);
+		OUT_func           : OUT std_logic_vector(5 downto 0);
+		OUT_immValue       : OUT std_logic_vector(15 downto 0);
+		OUT_PCPlus4        : OUT std_logic_vector(31 downto 0);
+		OUT_instruction	   : OUT std_logic_vector(31 downto 0)
 	);
 end FetchCycle;
 
@@ -46,6 +41,7 @@ architecture behavior of FetchCycle is
 
 	component FetchRegister
 		port(clk           : IN  std_logic;
+			 enable        : IN  std_logic;
 			 opSelect      : IN  std_logic_vector(5 downto 0);
 			 regSource     : IN  std_logic_vector(4 downto 0);
 			 regTarget     : IN  std_logic_vector(4 downto 0);
@@ -123,13 +119,15 @@ begin
 			func          => funcSig,
 			immValue      => immValueSig,
 			PCPlus4       => PCPlus4,
+			instruction	  => to_Decoder,
 			OUT_opSelect  => OUT_opSelect,
 			OUT_regSource => OUT_regSource,
 			OUT_regTarget => OUT_regTarget,
 			OUT_regDest   => OUT_regDest,
 			OUT_func      => OUT_func,
 			OUT_immValue  => OUT_immValue,
-			OUT_PCPlus4   => OUT_PCPlus4
+			OUT_PCPlus4   => OUT_PCPlus4,
+			OUT_instruction => OUT_instruction
 		);
 	PC_PlusOne : component Adder
 		port map(
@@ -141,6 +139,7 @@ begin
 	programCounter : component PC
 		port map(
 			clk         => clk,
+			enable      => enable,
 			countUpdate => countUpdateWBCycle,
 			countIn     => programCounter_Prime,
 			counter     => programCounter_Sig

@@ -13,6 +13,7 @@ entity ExecutionRegister is
 		RegWrite                 : IN  std_logic;
 		Branch                   : IN  std_logic;
 		Jump                     : IN  std_logic;
+		opSelect				 : IN  std_logic_vector(5 downto 0);
 		wdataContr               : IN  std_logic_vector(1 downto 0);
 
 		------------------------DATA PATH-------------------------
@@ -32,6 +33,7 @@ entity ExecutionRegister is
 		OUT_RegWrite             : OUT std_logic;
 		OUT_Branch               : OUT std_logic;
 		OUT_Jump                 : OUT std_logic;
+		OUT_opSelect			 : OUT std_logic_vector(5 downto 0);
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 		
 		OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
@@ -56,6 +58,7 @@ begin
 			OUT_RegWrite    <= RegWrite;
 			OUT_Branch      <= Branch;
 			OUT_Jump        <= Jump;
+			OUT_opSelect	<= opSelect;
 			OUT_wdataContr  <= wdataContr;
 
 			OUT_ALUResult            <= ALUResult;

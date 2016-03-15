@@ -44,6 +44,7 @@ entity ExecutionCycle is
 		OUT_RegWrite             : OUT std_logic;
 		OUT_Branch               : OUT std_logic;
 		OUT_Jump                 : OUT std_logic;
+		OUT_opSelect			 : OUT std_logic;
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 
 		--===============data path==================--
@@ -72,6 +73,7 @@ architecture behavior of ExecutionCycle is
 		RegWrite                 : IN  std_logic;
 		Branch                   : IN  std_logic;
 		Jump                     : IN  std_logic;
+		opSelect				 : IN  std_logic_vector(4 downto 0);
 		wdataContr               : IN  std_logic_vector(1 downto 0);
 
 		------------------------DATA PATH-------------------------
@@ -91,6 +93,7 @@ architecture behavior of ExecutionCycle is
 		OUT_RegWrite             : OUT std_logic;
 		OUT_Branch               : OUT std_logic;
 		OUT_Jump                 : OUT std_logic;
+		OUT_opSelect			 : OUT std_logic_vector(4 downto 0);
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 	
 		OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
@@ -307,6 +310,7 @@ begin
 		RegWrite                 => RegWrite,
 		Branch                   => Branch,
 		Jump                     => Jump,
+		opSelect			     => opSelect,
 		wdataContr               => wdataContr,
 
 		------------------------DATA PATH-------------------------
@@ -326,6 +330,7 @@ begin
 		OUT_RegWrite             => OUT_RegWrite,
 		OUT_Branch               => OUT_Branch,
 		OUT_Jump                 => OUT_Jump,
+		OUT_opSelect		   	 => OUT_opSelect,
 		OUT_wdataContr           => OUT_wdataContr,
 
 		OUT_ALUResult            => OUT_ALUResult,

@@ -20,7 +20,7 @@ entity DecodeCycle is
 		PCPlus4   	: IN std_logic_vector(31 downto 0);
 		--============WritebackCycle=======================
 		finalWriteData	: IN std_logic_vector(31 downto 0);
-		regWrite	: IN std_logic;	
+		regWrite		: IN std_logic;	
 
 
 		--============     CYCLE OUTPUTS       ===================
@@ -312,7 +312,7 @@ begin
 
 	InstructionRegFile:MUX5bit Port map(
 				high		=> regDestF,
-				low		=> regTarget,
+				low			=> regTarget,
 				selector	=> RegDstC,
 				out_put		=> output5
 				);

@@ -10,15 +10,11 @@ entity writeBackCycle is
 		--===============control path==================--
 		MemRead              : IN  std_logic;
 		MemtoReg             : IN  std_logic;
-		ALUOp                : IN  std_logic_vector(4 downto 0);
 		MemWrite             : IN  std_logic;
 		RegWrite             : IN  std_logic;
 		Branch               : IN  std_logic;
 		Jump                 : IN  std_logic;
-		ShiftContr           : IN  std_logic;
 		wdataContr           : IN  std_logic_vector(1 downto 0);
-		JRControl            : IN  std_logic;
-		countUpdate          : IN  std_logic;
 		opSelect             : IN  std_logic_vector(5 downto 0);
 
 		--===============data path==================--

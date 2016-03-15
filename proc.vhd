@@ -4,9 +4,9 @@ use ieee.numeric_std.all;
 
 entity proc is
 	Port(
-		clk		: IN std_logic;
-		
-		
+		clk   : IN std_logic;
+		reset : IN std_logic;
+
 	);
 end entity;
 
@@ -32,7 +32,7 @@ architecture behavior of proc is
 			 FetchStall  : OUT std_logic                    := 0;
 			 PCStall     : OUT std_logic                    := 0);
 	end component HazardUnit;
-	
+
 	component FetchCycle
 		port(clk                 : IN  std_logic;
 			 out_newPC           : IN  std_logic_vector(31 downto 0);
@@ -53,44 +53,47 @@ architecture behavior of proc is
 			 OUT_immValue        : OUT std_logic_vector(15 downto 0);
 			 OUT_PCPlus4         : OUT std_logic_vector(31 downto 0));
 	end component FetchCycle;
-	
-	component decode_stage
-		port(clk                  : IN  std_logic;
-			 reset                : IN  std_logic;
-			 instruction          : IN  std_logic_vector(31 downto 0);
-			 opSelect             : IN  std_logic_vector(5 downto 0);
-			 regSource            : IN  std_logic_vector(4 downto 0);
-			 regTarget            : IN  std_logic_vector(4 downto 0);
-			 regDest              : IN  std_logic_vector(4 downto 0);
-			 func                 : IN  std_logic_vector(5 downto 0);
-			 immValue             : IN  std_logic_vector(15 downto 0);
-			 PCPlus4              : IN  std_logic_vector(31 downto 0);
-			 finalWriteData       : IN  std_logic_vector(31 downto 0);
-			 regWrite             : IN  std_logic;
-			 out_PCPlus4          : OUT std_logic_vector(31 downto 0);
-			 out_PC               : OUT std_logic_vector(31 downto 0);
-			 out_RegDst           : OUT std_logic;
-			 out_MemRead          : OUT std_logic;
-			 out_MemtoReg         : OUT std_logic;
-			 out_ALUOp            : OUT std_logic_vector(4 downto 0);
-			 out_MemWrite         : OUT std_logic;
-			 out_ALUSrc           : OUT std_logic;
-			 out_RegWrite         : OUT std_logic;
-			 out_Branch           : OUT std_logic;
-			 out_Jump             : OUT std_logic;
-			 out_ShiftContr       : OUT std_logic;
-			 out_wdataContr       : OUT std_logic_vector(1 downto 0);
-			 out_opSelect         : OUT std_logic_vector(5 downto 0);
-			 out_rdata_1          : OUT std_logic_vector(31 DOWNTO 0);
-			 out_rdata_2          : OUT std_logic_vector(31 DOWNTO 0);
-			 out_JumpAddr         : OUT std_logic_vector(31 DOWNTO 0);
-			 out_JRControl        : OUT std_logic;
-			 out_ALUfunc          : OUT std_logic_vector(5 DOWNTO 0);
-			 out_ExtendedImmValue : OUT std_logic_vector(31 DOWNTO 0);
-			 out_regDestination   : OUT std_logic_vector(4 DOWNTO 0);
-			 out_regTarget        : OUT std_logic_vector(4 DOWNTO 0));
-	end component decode_stage;
-	
+
+	component DecodeCycle
+		port(clk                     : IN  std_logic;
+			 flush                   : IN  std_logic;
+			 reset                   : IN  std_logic;
+			 instruction             : IN  std_logic_vector(31 downto 0);
+			 opSelect                : IN  std_logic_vector(5 downto 0);
+			 regSource               : IN  std_logic_vector(4 downto 0);
+			 regTarget               : IN  std_logic_vector(4 downto 0);
+			 regDest                 : IN  std_logic_vector(4 downto 0);
+			 func                    : IN  std_logic_vector(5 downto 0);
+			 immValue                : IN  std_logic_vector(15 downto 0);
+			 PCPlus4                 : IN  std_logic_vector(31 downto 0);
+			 finalWriteData          : IN  std_logic_vector(31 downto 0);
+			 regWrite                : IN  std_logic;
+			 out_PCPlus4             : OUT std_logic_vector(31 downto 0);
+			 out_PC                  : OUT std_logic_vector(31 downto 0);
+			 out_RegDst              : OUT std_logic;
+			 out_MemRead             : OUT std_logic;
+			 out_MemtoReg            : OUT std_logic;
+			 out_ALUOp               : OUT std_logic_vector(4 downto 0);
+			 out_MemWrite            : OUT std_logic;
+			 out_ALUSrc              : OUT std_logic;
+			 out_RegWrite            : OUT std_logic;
+			 out_Branch              : OUT std_logic;
+			 out_Jump                : OUT std_logic;
+			 out_ShiftContr          : OUT std_logic;
+			 out_wdataContr          : OUT std_logic_vector(1 downto 0);
+			 out_opSelect            : OUT std_logic_vector(5 downto 0);
+			 out_rdata_1             : OUT std_logic_vector(31 DOWNTO 0);
+			 out_rdata_2             : OUT std_logic_vector(31 DOWNTO 0);
+			 out_JumpAddr            : OUT std_logic_vector(31 DOWNTO 0);
+			 out_JRControl           : OUT std_logic;
+			 out_ALUfunc             : OUT std_logic_vector(5 DOWNTO 0);
+			 out_ExtendedImmValue    : OUT std_logic_vector(31 DOWNTO 0);
+			 out_ExtendedJUI         : OUT std_logic_vector(31 downto 0);
+			 out_ExtendedShiftAmount : OUT std_logic_vector(31 downto 0);
+			 out_regDestination      : OUT std_logic_vector(4 DOWNTO 0);
+			 out_regTarget           : OUT std_logic_vector(4 DOWNTO 0));
+	end component DecodeCycle;
+
 	component ExecutionCycle
 		port(clk                      : IN  std_logic;
 			 ForwardAE                : IN  std_logic_vector(1 downto 0);
@@ -136,7 +139,7 @@ architecture behavior of proc is
 			 OUT_ExtendedJUI          : OUT std_logic_vector(31 downto 0);
 			 OUT_PC                   : OUT std_logic_vector(31 downto 0));
 	end component ExecutionCycle;
-	
+
 	component writeBackCycle
 		port(clk                  : IN  std_logic;
 			 MemRead              : IN  std_logic;
@@ -167,133 +170,170 @@ architecture behavior of proc is
 			 out_newPC            : OUT std_logic_vector(31 downto 0);
 			 FinalWriteData       : OUT std_logic_vector(31 downto 0));
 	end component writeBackCycle;
+	--signals out of Fetch Cycle
+	signal opSelectF                          : std_logic_vector(5 downto 0);
+	signal regSourceF, regTargetF, regDestF   : std_logic_vector(4 downto 0);
+	signal funcF                              : std_logic_vector(5 downto 0);
+	signal immValueF                          : std_logic_vector(15 downto 0);
+	signal PCPlus4F                           : std_logic_vector(31 downto 0);
+	signal instructionF                       : std_logic_vector(31 downto 0);
+	--signals out of Decode Cycle
+	signal PCPlus4D                           : std_logic_vector(31 downto 0);
+	signal PCD                                : std_logic_vector(31 downto 0);
+	signal regDestD, regSourceD, regTargetD   : std_logic_vector(4 downto 0);
+	signal MemReadD, MemtoRegD, MemWriteD     : std_logic;
+	signal ALUOpD                             : std_logic_vector(4 downto 0);
+	signal ALUSrcD, regWriteD, BranchD, JumpD : std_logic;
+	signal ShiftContrD, wDataContrD           : std_logic;
+	signal opSelectD                          : std_logic(5 downto 0);
+	signal rData1D, rData2D                   : std_logic_vector(31 downto 0);
+	signal JumpAddressD                       : std_logic_vector(31 downto 0);
+	signal JRControlD                         : std_logic;
+	signal ALUFuncD                           : std_logic_vector(5 downto 0);
+	signal ExtendedImmValueD                  : std_logic_vector(31 downto 0);
+	signal ExtendedJUID                       : std_logic_vector(31 downto 0);
+	signal ExtendedShamtD                     : std_logic_vector(31 downto 0);
+	signal opSelectE						  : std_logic_vector(4 downto 0);
+	signal regDestControlD                    : std_logic;
+	--signals out of Execution Cycle
+	signal MemReadE, MemToRegE, MemWriteE     : std_logic;
+	signal RegWriteE, BranchE, JumpE          : std_logic;
+	signal wdataContrE                        : std_logic;
+	signal ALUResultE                         : std_logic_vector(31 downto 0);
+	signal RData2E                            : std_logic_vector(31 downto 0);
+	signal RegDestinationE                    : std_logic_vector(4 downto 0);
+	signal newPCE                             : std_logic_vector(31 downto 0);
+	signal JumpAddressE                       : std_logic_vector(31 downto 0);
+	signal BranchAddressE                     : std_logic_vector(31 downto 0);
+	signal ExtendedJUIE                       : std_logic_vector(31 downto 0);
+	signal PCE                                : std_logic_vector(31 downto 0);
+	--signals out of WriteBack Cycle
+	signal 
+
 begin
-	Fetch: component FetchCycle
+	Fetch : component FetchCycle
 		port map(
-			clk                 => clk,
-			out_newPC           => out_newPC,
-			out_PCUpdateControl => out_PCUpdateControl,
-			countUpdateWBCycle  => countUpdateWBCycle,
-			opSelect            => opSelect,
-			regSource           => regSource,
-			regTarget           => regTarget,
-			regDest             => regDest,
-			func                => func,
-			immValue            => immValue,
-			PCPlus4D            => PCPlus4D,
-			OUT_opSelect        => OUT_opSelect,
-			OUT_regSource       => OUT_regSource,
-			OUT_regTarget       => OUT_regTarget,
-			OUT_regDest         => OUT_regDest,
-			OUT_func            => OUT_func,
-			OUT_immValue        => OUT_immValue,
-			OUT_PCPlus4         => OUT_PCPlus4
+			clk                => clk,
+			enable             => enable,
+			newPC              => out_newPC,
+			PCUpdateControl    => out_PCUpdateControl,
+			countUpdateWBCycle => countUpdateWBCycle,
+			OUT_opSelect       => opSelectF,
+			OUT_regSource      => regSourceF,
+			OUT_regTarget      => regTargetF,
+			OUT_regDest        => regDestF,
+			OUT_func           => funcF,
+			OUT_immValue       => immValueF,
+			OUT_PCPlus4        => PCPlus4F,
+			OUT_instruction    => instructionF
 		);
-	Decode: component decode_stage
+
+	Decode : component DecodeCycle
 		port map(
-			clk                  => clk,
-			reset                => reset,
-			instruction          => instruction,
-			opSelect             => opSelect,
-			regSource            => regSource,
-			regTarget            => regTarget,
-			regDest              => regDest,
-			func                 => func,
-			immValue             => immValue,
-			PCPlus4              => PCPlus4,
-			finalWriteData       => finalWriteData,
-			regWrite             => regWrite,
-			out_PCPlus4          => out_PCPlus4,
-			out_PC               => out_PC,
-			out_RegDst           => out_RegDst,
-			out_MemRead          => out_MemRead,
-			out_MemtoReg         => out_MemtoReg,
-			out_ALUOp            => out_ALUOp,
-			out_MemWrite         => out_MemWrite,
-			out_ALUSrc           => out_ALUSrc,
-			out_RegWrite         => out_RegWrite,
-			out_Branch           => out_Branch,
-			out_Jump             => out_Jump,
-			out_ShiftContr       => out_ShiftContr,
-			out_wdataContr       => out_wdataContr,
-			out_opSelect         => out_opSelect,
-			out_rdata_1          => out_rdata_1,
-			out_rdata_2          => out_rdata_2,
-			out_JumpAddr         => out_JumpAddr,
-			out_JRControl        => out_JRControl,
-			out_ALUfunc          => out_ALUfunc,
-			out_ExtendedImmValue => out_ExtendedImmValue,
-			out_regDestination   => out_regDestination,
-			out_regTarget        => out_regTarget
+			clk                     => clk,
+			flush                   => flush,
+			reset                   => reset,
+			instruction             => instructionF,
+			opSelect                => opSelectF,
+			regSource               => regSourceF,
+			regTarget               => regTargetF,
+			regDest                 => regDestF,
+			func                    => funcF,
+			immValue                => immValueF,
+			PCPlus4                 => PCPlus4F,
+			finalWriteData          => finalWriteData,
+			regWrite                => regWrite,
+			out_PCPlus4             => PCPlus4D,
+			out_PC                  => PCD,
+			out_RegDst              => regDestControlD,
+			out_MemRead             => MemReadD,
+			out_MemtoReg            => MemtoRegD,
+			out_ALUOp               => ALUOpD,
+			out_MemWrite            => MemWriteD,
+			out_ALUSrc              => ALUSrcD,
+			out_RegWrite            => RegWriteD,
+			out_Branch              => BranchD,
+			out_Jump                => JumpD,
+			out_ShiftContr          => ShiftContrD,
+			out_wdataContr          => wdataContrD,
+			out_opSelect            => opSelectD,
+			out_rdata_1             => rdata1D,
+			out_rdata_2             => rdata2D,
+			out_JumpAddr            => JumpAddressD,
+			out_JRControl           => JRControlD,
+			out_ALUfunc             => ALUfuncD,
+			out_ExtendedImmValue    => ExtendedImmValueD,
+			out_ExtendedJUI         => ExtendedJUID,
+			out_ExtendedShiftAmount => ExtendedShamtD,
+			out_regDestination      => regDestD,
+			out_regTarget           => regTargetD
 		);
-	Execution:component ExecutionCycle
+
+	Execution : component ExecutionCycle
 		port map(
 			clk                      => clk,
 			ForwardAE                => ForwardAE,
 			ForwardBE                => ForwardBE,
-			RegDst                   => RegDst,
-			MemRead                  => MemRead,
-			MemtoReg                 => MemtoReg,
-			ALUOp                    => ALUOp,
-			MemWrite                 => MemWrite,
-			ALUSrc                   => ALUSrc,
-			RegWrite                 => RegWrite,
-			Branch                   => Branch,
-			Jump                     => Jump,
-			ShiftContr               => ShiftContr,
-			wdataContr               => wdataContr,
-			JRControl                => JRControl,
-			ALUFunc                  => ALUFunc,
-			opSelect                 => opSelect,
+			RegDst                   => RegDestControlD,
+			MemRead                  => MemReadD,
+			MemtoReg                 => MemtoRegD,
+			ALUOp                    => ALUOpD,
+			MemWrite                 => MemWriteD,
+			ALUSrc                   => ALUSrcD,
+			RegWrite                 => RegWriteD,
+			Branch                   => BranchD,
+			Jump                     => JumpD,
+			ShiftContr               => ShiftContrD,
+			wdataContr               => wdataContrD,
+			JRControl                => JRControlD,
+			ALUFunc                  => ALUFuncD,
+			opSelect                 => opSelectD,
 			ForwardedALUM            => ForwardedALUM,
 			ForwardedALUW            => ForwardedALUW,
-			RData1                   => RData1,
-			RData2                   => RData2,
-			RegDestination           => RegDestination,
-			RegTarget                => RegTarget,
-			ExtendedImmValue         => ExtendedImmValue,
-			ExtendedShiftAmount      => ExtendedShiftAmount,
-			ExtendedJUI              => ExtendedJUI,
-			PCPlus4                  => PCPlus4,
-			PC                       => PC,
-			OUT_MemRead              => OUT_MemRead,
-			OUT_MemtoReg             => OUT_MemtoReg,
-			OUT_MemWrite             => OUT_MemWrite,
-			OUT_RegWrite             => OUT_RegWrite,
-			OUT_Branch               => OUT_Branch,
-			OUT_Jump                 => OUT_Jump,
-			OUT_wdataContr           => OUT_wdataContr,
-			OUT_ALUResult            => OUT_ALUResult,
-			OUT_RData2               => OUT_RData2,
-			OUT_RegisterWriteAddress => OUT_RegisterWriteAddress,
-			OUT_newPC                => OUT_newPC,
-			OUT_JumpAddress          => OUT_JumpAddress,
-			OUT_BranchAddress        => OUT_BranchAddress,
-			OUT_ExtendedJUI          => OUT_ExtendedJUI,
-			OUT_PC                   => OUT_PC
+			RData1                   => RData1D,
+			RData2                   => RData2D,
+			RegDestination           => RegDestinationD,
+			RegTarget                => RegTargetD,
+			ExtendedImmValue         => ExtendedImmValueD,
+			ExtendedShiftAmount      => ExtendedShamtD,
+			ExtendedJUI              => ExtendedJUID,
+			PCPlus4                  => PCPlus4D,
+			PC                       => PCD,
+			OUT_MemRead              => MemReadE,
+			OUT_MemtoReg             => MemtoRegE,
+			OUT_MemWrite             => MemWriteE,
+			OUT_RegWrite             => RegWriteE,
+			OUT_Branch               => BranchE,
+			OUT_Jump                 => JumpE,
+			OUT_opSelect			 => opSelectE,
+			OUT_wdataContr           => wdataContrE,
+			OUT_ALUResult            => ALUResultE,
+			OUT_RData2               => RData2E,
+			OUT_RegisterWriteAddress => RegDestinationE,
+			OUT_newPC                => newPCE,
+			OUT_JumpAddress          => JumpAddressE,
+			OUT_BranchAddress        => BranchAddressE,
+			OUT_ExtendedJUI          => ExtendedJUIE,
+			OUT_PC                   => PCE
 		);
-	WriteBack: component writeBackCycle
+	WriteBack : component writeBackCycle
 		port map(
 			clk                  => clk,
-			MemRead              => MemRead,
-			MemtoReg             => MemtoReg,
-			ALUOp                => ALUOp,
-			MemWrite             => MemWrite,
-			RegWrite             => RegWrite,
-			Branch               => Branch,
-			Jump                 => Jump,
-			ShiftContr           => ShiftContr,
-			wdataContr           => wdataContr,
-			JRControl            => JRControl,
-			countUpdate          => countUpdate,
-			opSelect             => opSelect,
-			ALUResult            => ALUResult,
-			RData2               => RData2,
-			RegisterWriteAddress => RegisterWriteAddress,
-			JumpAddress          => JumpAddress,
-			BranchAddress        => BranchAddress,
-			ExtendedJUI          => ExtendedJUI,
-			PC                   => PC,
+			MemRead              => MemReadE,
+			MemtoReg             => MemtoRegE,
+			MemWrite             => MemWriteE,
+			RegWrite             => RegWriteE,
+			Branch               => BranchE,
+			Jump                 => JumpE,
+			wdataContr           => wdataContrE,
+			opSelect             => opSelectE,
+			ALUResult            => ALUResultE,
+			RData2               => RData2E,
+			RegisterWriteAddress => RegDestinationE,
+			JumpAddress          => JumpAddressE,
+			BranchAddress        => BranchAddressE,
+			ExtendedJUI          => ExtendedJUIE,
+			PC                   => PCE,
 			out_regWrite         => out_regWrite,
 			out_memtoRegW        => out_memtoRegW,
 			out_PCUpdateControl  => out_PCUpdateControl,
@@ -303,7 +343,7 @@ begin
 			out_newPC            => out_newPC,
 			FinalWriteData       => FinalWriteData
 		);
-	Hazard: component HazardUnit
+	Hazard : component HazardUnit
 		port map(
 			WriteRegM   => WriteRegM,
 			RegWriteE   => RegWriteE,
