@@ -9,7 +9,7 @@ entity DecodeCycle is
 		flush		: IN std_logic;
 		reset		: IN std_logic;
 		instruction 	: IN std_logic_vector(31 downto 0);
-		
+
 		--==========fetch register=================
 		opSelect	: IN std_logic_vector(5 downto 0);
 		regSource	: IN std_logic_vector(4 downto 0);
@@ -20,9 +20,9 @@ entity DecodeCycle is
 		PCPlus4   	: IN std_logic_vector(31 downto 0);
 		--============WritebackCycle=======================
 		finalWriteData	: IN std_logic_vector(31 downto 0);
-		regWrite		: IN std_logic;	
-
-
+		regWrite	: IN std_logic;	
+		PC		: IN std_logic_vector(31 downto 0);
+		
 		--============     CYCLE OUTPUTS       ===================
 		--==========concatnator ============================
 		--out_JumpConcat	: OUT std_logic_vector(31 downto 0);
@@ -53,18 +53,18 @@ entity DecodeCycle is
 		out_JRControl	: OUT std_logic;
 		out_ALUfunc	: OUT std_logic_vector(5 DOWNTO 0);
 		--================== sign extender ================
-		out_ExtendedImmValue:OUT std_logic_vector(31 DOWNTO 0);
-		out_ExtendedJUI	:OUT std_logic_vector(31 downto 0); 
-		out_ExtendedShiftAmount:OUT std_logic_vector(31 downto 0);
+		out_ExtendedImmValue :OUT std_logic_vector(31 DOWNTO 0);
+		out_ExtendedJUI	     :OUT std_logic_vector(31 downto 0); 
+		out_ExtendedShiftAmount    :OUT std_logic_vector(31 downto 0);
 		--==================fetchregister ================
-		out_regDestination: OUT std_logic_vector(4 DOWNTO 0);
-		out_regTarget	: OUT std_logic_vector(4 DOWNTO 0)
+		out_regDestination   : OUT std_logic_vector(4 DOWNTO 0);
+		out_regTarget	     : OUT std_logic_vector(4 DOWNTO 0)
 		);
 end entity DecodeCycle; 
 
 
 
-architecture behavior of decode_stage is
+architecture behavior of DecodeCycle is
 -----------------------------component declaration-----------------------------------------------
 	component Controller is 
 	Port(
@@ -101,19 +101,16 @@ architecture behavior of decode_stage is
 	end component;
 ------------------------------------------------------------------
 	component regfile IS
-		GENERIC (
-					NBIT: INTEGER := 32;
-					NSEL : INTEGER := 3 );
-			PORT(
-				clk	: IN 	std_logic;
-				rst_s	: IN 	std_logic;
-				we	: IN 	std_logic;
-				raddr_1	: IN 	std_logic_vector(NSEL - 1 DOWNTO 0);
-				raddr_2	: IN 	std_logic_vector(NSEL - 1 DOWNTO 0);
-				waddr	: IN 	std_logic_vector(NSEL - 1 DOWNTO 0);
-				rdata_1	: OUT 	std_logic_vector(NBIT - 1 DOWNTO 0);
-				rdata_2	: OUT 	std_logic_vector(NBIT - 1 DOWNTO 0);
-				wdata	: IN 	std_logic_vector(NBIT - 1 DOWNTO 0)
+	PORT(
+		clk		: in STD_LOGIC;
+		rst_s		: in STD_LOGIC;
+	 	we		: in STD_LOGIC;
+	 	raddr_1		: in STD_LOGIC_VECTOR(4 downto 0);
+		raddr_2		: in STD_LOGIC_VECTOR(4 downto 0);
+	 	waddr		: in STD_LOGIC_VECTOR(4 downto 0);
+	 	wdata		: in STD_LOGIC_VECTOR(31 downto 0);
+	 	rdata_1		: out STD_LOGIC_VECTOR(31 downto 0);
+		rdata_2		: out STD_LOGIC_VECTOR(31 downto 0)
 		);
 	end component;
 -------------------------------------------------------------------	
@@ -169,9 +166,6 @@ architecture behavior of decode_stage is
 	Port(
 		clk                     : IN  std_logic;
 		flush			: IN  std_logic;
-		------------------INPUTS---------------------
-		--control path entries
-		--control bits from the controller
 		RegDst                  : IN  std_logic;
 		MemRead                 : IN  std_logic;
 		MemtoReg                : IN  std_logic;
@@ -184,26 +178,18 @@ architecture behavior of decode_stage is
 		ShiftContr              : IN  std_logic;
 		wdataContr              : IN  std_logic_vector(1 downto 0);
 		opSelect                : IN  std_logic_vector(5 downto 0);
-		--control bits from ALUFunc
 		JRControl               : IN  std_logic;
 		ALUFunc                 : IN  std_logic_vector(5 downto 0);
-
-		--data path entries
-		--data entries from the Register File
 		RData1                  : IN  std_logic_vector(31 downto 0);
 		RData2                  : IN  std_logic_vector(31 downto 0);
-		--data entries from Instruction Code data
 		RegDestination          : IN  std_logic_vector(4 downto 0);
 		RegTarget               : IN  std_logic_vector(4 downto 0);
 		ExtendedImmValue        : IN  std_logic_vector(31 downto 0);
 		ExtendedShiftAmount     : IN  std_logic_vector(31 downto 0);
 		ExtendedJUI             : IN  std_logic_vector(31 downto 0);
-		--data entry from PCPlus4
 		PCPlus4                 : IN  std_logic_vector(31 downto 0);
 		PC                      : IN  std_logic_vector(31 downto 0);
 
-		--------------------OUTPUTS-------------------------
-		--control bits out
 		OUT_RegDst              : OUT std_logic;
 		OUT_MemRead             : OUT std_logic;
 		OUT_MemtoReg            : OUT std_logic;
@@ -218,8 +204,7 @@ architecture behavior of decode_stage is
 		OUT_JRControl           : OUT std_logic;
 		OUT_ALUFunc             : OUT std_logic_vector(5 downto 0);
 		OUT_opSelect            : OUT std_logic_vector(5 downto 0);
-
-		--data entries out
+		
 		OUT_RData1              : OUT std_logic_vector(31 downto 0);
 		OUT_RData2              : OUT std_logic_vector(31 downto 0);
 		OUT_RegDestination      : OUT std_logic_vector(4 downto 0);
@@ -255,7 +240,7 @@ SIGNAL PCPlus4F				: std_logic_vector(31 downto 0);
 SIGNAL rdata_1, rdata_2			: std_logic_vector(31 DOWNTO 0);
 SIGNAL raddr_1, raddr_2			: std_logic_vector(4 downto 0);
 ------------------------------------signals out of loadControlRAM-------------------------------
-SIGNAL loadOut					:std_logic_vector(31 downto 0);
+SIGNAL loadOut				:std_logic_vector(31 downto 0);
 -------------------------------signals out of concatenator-----------------------------
 SIGNAL JumpConcat			: std_logic_vector(31 downto 0);
 -----------------------------------signals out of loadControlReg------------------------------
@@ -270,7 +255,7 @@ SIGNAL extendImmS			: std_logic_vector(31 downto 0);
 ----------------------------------signals out of shiftExtender---------------------------------
 SIGNAL ExtendedShiftAmount		: std_logic_vector(31 downto 0);
 ----------------------------------signals out of JuiExtender---------------------------------
-SIGNAL ExtendedJUI				: std_logic_vector(31 downto 0);
+SIGNAL ExtendedJUI			: std_logic_vector(31 downto 0);
 -------------------------------------signal end--------------------------------------------------
 
 -------------------------------------PortMap--------------------------------------------------
@@ -312,7 +297,7 @@ begin
 
 	InstructionRegFile:MUX5bit Port map(
 				high		=> regDestF,
-				low			=> regTarget,
+				low		=> regTarget,
 				selector	=> RegDstC,
 				out_put		=> output5
 				);
@@ -345,8 +330,7 @@ begin
 				in_put	=> immValue,
 				out_put	=> extendImmS
 				);
-	cycleExecute:DecodeRegister port map(	
-			
+	cycleExecute:DecodeRegister port map(				
 		clk                     =>clk,
 		flush			=>flush,		
 		------------------INPUTS---------------------
@@ -381,7 +365,6 @@ begin
 		--data entry from PCPlus4
 		PCPlus4                 =>PCPlus4,
 		PC                      =>PC,
-
 		--------------------OUTPUTS-------------------------
 		--control bits out
 		OUT_RegDst              =>out_RegDst,
@@ -398,9 +381,8 @@ begin
 		OUT_JRControl           =>out_JRControl,
 		OUT_ALUFunc             =>out_ALUFunc,
 		OUT_opSelect            =>out_opSelect,
-
 		--data entries out
-		OUT_RData1              =>OUT_rdata_1,
+		OUT_RData1              =>out_rdata_1,
 		OUT_RData2              =>out_rdata_2,
 		OUT_RegDestination      =>out_regDestination,
 		OUT_RegTarget           =>out_regTarget,

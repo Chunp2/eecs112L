@@ -24,9 +24,9 @@ entity HazardUnit is
 		--logic control outputs--
 		ForwardBE   : OUT std_logic_vector(1 downto 0) := "00";
 		ForwardAE   : OUT std_logic_vector(1 downto 0) := "00";
-		DecodeFlush : OUT std_logic                    := 0;
-		FetchStall  : OUT std_logic                    := 0;
-		PCStall     : OUT std_logic                    := 0
+		DecodeFlush : OUT std_logic                    := '0';
+		FetchStall  : OUT std_logic                    := '0';
+		PCStall     : OUT std_logic                    := '0'
 	);
 end HazardUnit;
 
@@ -35,44 +35,45 @@ begin
 	process
 	begin
 		--EX Hazard
-		if (RegWriteM = 1) then
-			if (NOT (RegDestM = "00000") AND (RegDestM = RegSourceD)) then
+		if (RegWriteM = '1') then
+			if ( (NOT(RegDestM = "00000")) AND (RegDestM = RegSourceD)) then
 				ForwardAE <= "10";
 			elsif (NOT (RegDestM = "00000") AND (RegDestM = RegTargetD)) then
 				ForwardBE <= "10";
 			end if;
 		--MEM Hazard
-		elsif (RegWriteW = 1) then
+		elsif (RegWriteW = '1') then
 			if (NOT (RegDestW = "00000") AND (RegDestW = RegSourceD)) then
 				ForwardAE <= "01";
-			elsif (NOT (RegDestW = "0000") AND (RegDestW = RegTargetD)) then
+			elsif (NOT (RegDestW = "00000") AND (RegDestW = RegTargetD)) then
 				ForwardBE <= "01";
 			end if;
 		--Stall hazard for lw
-		elsif (MemRead = 1) then
+		elsif (MemRead = '1') then
 			if (RegTargetD = RegSourceF) OR (RegTargetD = RegTargetF) then
-				DecodeFlush <= 1;
-				FetchStall  <= 1;
-				PCStall     <= 1;
+				DecodeFlush <= '1';
+				FetchStall  <= '1';
+				PCStall     <= '1';
 			end if;
 		--stall for branches
-		elsif (Branch = 1) then
-			if (RegWriteE AND ((RegSourceD=RegDestE) OR (RegTargetD=RegDestE))) then 
-				DecodeFlush <= 1;
-				FetchStall  <= 1;
-				PCStall     <= 1;
-			elsif (MemToRegM) AND ((RegSourceD=RegDestM) OR (RegTargetD=RegDestM)) then
-				DecodeFlush <= 1;
-				FetchStall  <= 1;
-				PCStall     <= 1;
+		elsif (Branch = '1') then
+			if ((RegWriteE='1') AND ((RegSourceD=RegDestE) OR (RegTargetD=RegDestE))) then 
+				DecodeFlush <= '1';
+				FetchStall  <= '1';
+				PCStall     <= '1';
+			elsif (MemToRegM='1') AND ((RegSourceD=RegDestM) OR (RegTargetD=RegDestM)) then
+				DecodeFlush <= '1';
+				FetchStall  <= '1';
+				PCStall     <= '1';
 			end if;
 		--No hazard, reset all control bits	
 		else
 			ForwardAE   <= "00";
 			ForwardBE   <= "00";
-			DecodeFlush <= 0;
-			FetchStall  <= 0;
-			PCStall     <= 0;
+			DecodeFlush <= '0';
+			FetchStall  <= '0';
+			PCStall     <= '0';
 		end if;
+	
 	end process;
 end behavior;

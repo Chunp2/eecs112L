@@ -21,7 +21,7 @@ entity ExecutionCycle is
 		ShiftContr    : IN std_logic;
 		wdataContr    : IN std_logic_vector(1 downto 0);
 		JRControl     : IN std_logic;
-		ALUFunc       : IN std_logic_vector(5 downto 0);
+		ALUFuncCode   : IN std_logic_vector(5 downto 0);
 		opSelect      : IN std_logic_vector(5 downto 0);
 		------------data path-----------------
 		ForwardedALUM 		: IN std_logic_vector(31 downto 0); --ALUOutput from one cycle ahead
@@ -44,7 +44,7 @@ entity ExecutionCycle is
 		OUT_RegWrite             : OUT std_logic;
 		OUT_Branch               : OUT std_logic;
 		OUT_Jump                 : OUT std_logic;
-		OUT_opSelect			 : OUT std_logic;
+		OUT_opSelect		 : OUT std_logic_vector(5 downto 0);
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 
 		--===============data path==================--
@@ -55,7 +55,7 @@ entity ExecutionCycle is
 		OUT_JumpAddress          : OUT std_logic_vector(31 downto 0);
 		OUT_BranchAddress        : OUT std_logic_vector(31 downto 0);
 		OUT_ExtendedJUI          : OUT std_logic_vector(31 downto 0);
-		OUT_PC                   : OUT std_logic_vector(31 downto 0);
+		OUT_PC                   : OUT std_logic_vector(31 downto 0)
 
 	);
 end entity;
@@ -73,12 +73,12 @@ architecture behavior of ExecutionCycle is
 		RegWrite                 : IN  std_logic;
 		Branch                   : IN  std_logic;
 		Jump                     : IN  std_logic;
-		opSelect				 : IN  std_logic_vector(4 downto 0);
+		opSelect		: IN  std_logic_vector(5 downto 0);
 		wdataContr               : IN  std_logic_vector(1 downto 0);
 
 		------------------------DATA PATH-------------------------
 		ALUResult                : IN  std_logic_vector(31 downto 0);
-		RData2                   : IN  std_logic_vector(4 downto 0);
+		RData2                   : IN  std_logic_vector(31 downto 0);
 		RegisterWriteAddress     : IN  std_logic_vector(4 downto 0);
 		NewPC                    : IN  std_logic_vector(31 downto 0);
 		JumpAddress              : IN  std_logic_vector(31 downto 0);
@@ -93,7 +93,7 @@ architecture behavior of ExecutionCycle is
 		OUT_RegWrite             : OUT std_logic;
 		OUT_Branch               : OUT std_logic;
 		OUT_Jump                 : OUT std_logic;
-		OUT_opSelect			 : OUT std_logic_vector(4 downto 0);
+		OUT_opSelect			 : OUT std_logic_vector(5 downto 0);
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 	
 		OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
@@ -146,7 +146,7 @@ architecture behavior of ExecutionCycle is
 		ShiftContr	: OUT std_logic;
 		out_put		: OUT std_logic_vector(5 downto 0)
 	);
-	end component ALUFunc;
+	end component;
 --MUXBranchOrNot --MUXJumpRegOrOffset --RegALU --shiftmux
 	component MUX32bit is
 		Port(
@@ -238,9 +238,9 @@ begin
 			selector    => ForwardBE,
 			wdata       => ForwardBOut
 		);
-	ALU : component alu 
+	ALUs : component ALU 
 		port map(
-			Func_in		=> ALUFunc,
+			Func_in		=> ALUFuncCode,
 			A_in		=> tier3Ain,
 			B_in		=> Bin,
 			O_out		=> ALUResult,
@@ -299,7 +299,7 @@ begin
 			selector	=> ALUSrc,
 			out_put		=> RegDestE
 		);
-	ExecutionRegister : component ExecutionRegister 
+	ExecutionRegisters : component ExecutionRegister 
 		Port map(
 		clk                      => clk,
 		--control path
@@ -310,7 +310,7 @@ begin
 		RegWrite                 => RegWrite,
 		Branch                   => Branch,
 		Jump                     => Jump,
-		opSelect			     => opSelect,
+		opSelect		  => opSelect,
 		wdataContr               => wdataContr,
 
 		------------------------DATA PATH-------------------------
@@ -330,7 +330,7 @@ begin
 		OUT_RegWrite             => OUT_RegWrite,
 		OUT_Branch               => OUT_Branch,
 		OUT_Jump                 => OUT_Jump,
-		OUT_opSelect		   	 => OUT_opSelect,
+		OUT_opSelect		 => OUT_opSelect,
 		OUT_wdataContr           => OUT_wdataContr,
 
 		OUT_ALUResult            => OUT_ALUResult,

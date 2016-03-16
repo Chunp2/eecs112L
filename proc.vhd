@@ -18,24 +18,24 @@ architecture behavior of proc is
 			 MemToRegM   : IN  std_logic;
 			 MemRead     : IN  std_logic;
 			 Branch      : IN  std_logic;
-			 RegSourceD  : IN  std_logic_vector(5 downto 0);
-			 RegTargetD  : IN  std_logic_vector(5 downto 0);
-			 RegSourceF  : IN  std_logic_vector(5 downto 0);
-			 RegTargetF  : IN  std_logic_vector(5 downto 0);
-			 RegDestE    : IN  std_logic_vector(5 downto 0);
-			 RegDestW    : IN  std_logic_vector(5 downto 0);
-			 RegDestM    : IN  std_logic_vector(5 downto 0);
+			 RegSourceD  : IN  std_logic_vector(4 downto 0);
+			 RegTargetD  : IN  std_logic_vector(4 downto 0);
+			 RegSourceF  : IN  std_logic_vector(4 downto 0);
+			 RegTargetF  : IN  std_logic_vector(4 downto 0);
+			 RegDestE    : IN  std_logic_vector(4 downto 0);
+			 RegDestW    : IN  std_logic_vector(4 downto 0);
+			 RegDestM    : IN  std_logic_vector(4 downto 0);
 			 ForwardBE   : OUT std_logic_vector(1 downto 0) := "00";
 			 ForwardAE   : OUT std_logic_vector(1 downto 0) := "00";
-			 DecodeFlush : OUT std_logic                    := 0;
-			 FetchStall  : OUT std_logic                    := 0;
-			 PCStall     : OUT std_logic                    := 0);
+			 DecodeFlush : OUT std_logic                    := '0';
+			 FetchStall  : OUT std_logic                    := '0';
+			 PCStall     : OUT std_logic                    := '0');
 	end component HazardUnit;
 
 	component FetchCycle
 		port(clk                 : IN  std_logic;
-			 out_newPC           : IN  std_logic_vector(31 downto 0);
-			 out_PCUpdateControl : IN  std_logic;
+			 enable		    : IN std_logic;
+			 newPC           : IN  std_logic_vector(31 downto 0);
 			 countUpdateWBCycle  : IN  std_logic;
 			 opSelect            : OUT std_logic_vector(5 downto 0);
 			 regSource           : OUT std_logic_vector(4 downto 0);
@@ -50,7 +50,10 @@ architecture behavior of proc is
 			 OUT_regDest         : OUT std_logic_vector(4 downto 0);
 			 OUT_func            : OUT std_logic_vector(5 downto 0);
 			 OUT_immValue        : OUT std_logic_vector(15 downto 0);
-			 OUT_PCPlus4         : OUT std_logic_vector(31 downto 0));
+			 OUT_PCPlus4         : OUT std_logic_vector(31 downto 0);
+			 OUT_instruction     : OUT std_logic_vector(31 downto 0)		
+		);
+			
 	end component FetchCycle;
 
 	component DecodeCycle
@@ -128,9 +131,10 @@ architecture behavior of proc is
 			 OUT_RegWrite             : OUT std_logic;
 			 OUT_Branch               : OUT std_logic;
 			 OUT_Jump                 : OUT std_logic;
+			 OUT_opSelect		  : OUT std_logic_vector(5 downto 0);
 			 OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 			 OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
-			 OUT_RData2               : OUT std_logic_vector(4 downto 0);
+			 OUT_RData2               : OUT std_logic_vector(31 downto 0);
 			 OUT_RegisterWriteAddress : OUT std_logic_vector(4 downto 0);
 			 OUT_newPC                : OUT std_logic_vector(31 downto 0);
 			 OUT_JumpAddress          : OUT std_logic_vector(31 downto 0);
@@ -180,8 +184,9 @@ architecture behavior of proc is
 	signal MemReadD, MemtoRegD, MemWriteD     : std_logic;
 	signal ALUOpD                             : std_logic_vector(4 downto 0);
 	signal ALUSrcD, regWriteD, BranchD, JumpD : std_logic;
-	signal ShiftContrD, wDataContrD           : std_logic;
-	signal opSelectD                          : std_logic(5 downto 0);
+	signal ShiftContrD			  : std_logic; 	
+	signal wDataContrD          		  : std_logic_vector(1 downto 0);
+	signal opSelectD                          : std_logic_vector(5 downto 0);
 	signal rData1D, rData2D                   : std_logic_vector(31 downto 0);
 	signal JumpAddressD                       : std_logic_vector(31 downto 0);
 	signal JRControlD                         : std_logic;
@@ -189,12 +194,12 @@ architecture behavior of proc is
 	signal ExtendedImmValueD                  : std_logic_vector(31 downto 0);
 	signal ExtendedJUID                       : std_logic_vector(31 downto 0);
 	signal ExtendedShamtD                     : std_logic_vector(31 downto 0);
-	signal opSelectE                          : std_logic_vector(4 downto 0);
 	signal regDestControlD                    : std_logic;
 	--signals out of Execution Cycle
+	signal opSelectE                          : std_logic_vector(5 downto 0);
 	signal MemReadE, MemToRegE, MemWriteE     : std_logic;
 	signal RegWriteE, BranchE, JumpE          : std_logic;
-	signal wdataContrE                        : std_logic;
+	signal wdataContrE                        : std_logic_vector(1 downto 0);
 	signal ALUResultE                         : std_logic_vector(31 downto 0);
 	signal RData2E                            : std_logic_vector(31 downto 0);
 	signal RegDestinationE                    : std_logic_vector(4 downto 0);

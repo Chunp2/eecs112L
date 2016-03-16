@@ -5,7 +5,7 @@ use IEEE.numeric_std.all;
 entity PC is
 	Port(
 		clk         : IN  std_logic;
-		stall       : IN  std_logic;
+		enable      : IN  std_logic;
 		countUpdate : IN  std_logic;
 		countIn     : IN  std_logic_vector(31 downto 0);
 		counter     : OUT std_logic_vector(31 downto 0)
@@ -22,7 +22,7 @@ begin
 				innerCount := to_integer(unsigned(countIn));
 			end if;
 			counter    <= std_logic_vector(to_unsigned(innerCount, 32));
-			if stall=0 then
+			if enable='0' then
 				innerCount := innerCount + 1;
 			end if;
 		end if;

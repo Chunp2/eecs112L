@@ -46,26 +46,26 @@ architecture behavior of writeBackCycle is
 			 addr  : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
 			 dataI : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
 			 dataO : OUT STD_LOGIC_VECTOR(31 DOWNTO 0));
-	end component dataMemory;
+	end component;
 
 	component MUX32bit
 		port(high     : IN  std_logic_vector(31 downto 0);
 			 low      : IN  std_logic_vector(31 downto 0);
 			 selector : IN  std_logic;
 			 out_put  : OUT std_logic_vector(31 downto 0));
-	end component MUX32bit;
+	end component;
 
 	component ORgate
 		port(Ain  : IN  std_logic;
 			 Bin  : IN  std_logic;
 			 Cout : OUT std_logic);
-	end component ORgate;
+	end component;
 
 	component loadControl
 		port(loadOP  : IN  std_logic_vector(5 DOWNTO 0);
 			 dataIn  : IN  std_logic_vector(31 DOWNTO 0);
 			 dataOut : OUT std_logic_vector(31 DOWNTO 0));
-	end component loadControl;
+	end component;
 
 	component MUX3to1
 		port(NormalInput : IN  std_logic_vector(31 downto 0);
@@ -73,7 +73,7 @@ architecture behavior of writeBackCycle is
 			 JALInput    : IN  std_logic_vector(31 downto 0);
 			 selector    : IN  std_logic_vector(1 downto 0);
 			 wdata       : OUT std_logic_vector(31 downto 0));
-	end component MUX3to1;
+	end component;
 
 	component writeRegister
 		port(clk                 : in  STD_LOGIC;
@@ -103,6 +103,9 @@ architecture behavior of writeBackCycle is
 	signal PCUpdateControl : std_logic;
 	--SIGNAL OUT OF AFTERRAMMUX--
 	signal tier1WriteData  : std_logic_vector(31 downto 0);
+	--signal for feeding back into cycle
+	signal ReadDataW_In	: std_logic_vector(31 downto 0);
+	signal ALUOutW_In	: std_logic_vector(31 downto 0);
 
 begin
 	RAM : component dataMemory
@@ -123,7 +126,7 @@ begin
 	LoadCtrlRam : component loadControl
 		port map(
 			loadOP  => opSelect,
-			dataIn  => out_ReadDataW,
+			dataIn  => ReadDataW_In,
 			dataOut => tier1WriteData
 		);
 	COUNTUPDATELOGIC : component ORgate
@@ -143,7 +146,7 @@ begin
 	AFTERRAMMUX : component MUX32bit
 		port map(
 			high     => tier1Writedata,
-			low      => out_ALUoutW,
+			low      => ALUOutW_In,
 			selector => MemtoReg,
 			out_put  => tier2WriteData
 		);
@@ -160,10 +163,12 @@ begin
 			out_regWrite        => out_regWrite,
 			out_memtoRegW       => out_memtoRegW,
 			out_PCUpdateControl => out_PCUpdateControl,
-			out_ALUoutW         => out_ALUoutW,
-			out_ReadDataW       => out_ReadDataW,
+			out_ALUoutW         => ALUOutW_in,
+			out_ReadDataW       => ReadDataW_In,
 			out_writeReg        => out_writeReg,
 			out_newPC           => out_newPC
 		);
 	HazardForwarded <= tier2Writedata;
+	out_ReadDataW <= ReadDataW_In;
+	out_ALUOutW <= ALUOutW_In;
 end behavior;

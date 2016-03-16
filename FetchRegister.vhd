@@ -36,7 +36,7 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			if enable = 1 then
+			if enable = '1' then
 				OUT_opSelect    <= opSelect;
 				OUT_regSource   <= regSource;
 				OUT_regTarget   <= regTarget;

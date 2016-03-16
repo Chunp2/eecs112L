@@ -8,7 +8,6 @@ entity FetchCycle is
 		enable             : IN  std_logic;
 		newPC              : IN  std_logic_vector(31 downto 0);
 		countUpdateWBCycle : IN  std_logic;
-
 		OUT_opSelect       : OUT std_logic_vector(5 downto 0);
 		OUT_regSource      : OUT std_logic_vector(4 downto 0);
 		OUT_regTarget      : OUT std_logic_vector(4 downto 0);
@@ -26,7 +25,7 @@ architecture behavior of FetchCycle is
 			addr   : IN    std_logic_vector(31 downto 0);
 			dataIO : INOUT std_logic_vector(31 downto 0)
 		);
-	end component InstructionMemory;
+	end component;
 
 	component Decoder
 		port(instruction : IN  std_logic_vector(31 downto 0);
@@ -36,10 +35,10 @@ architecture behavior of FetchCycle is
 			 regDest     : OUT std_logic_vector(4 downto 0);
 			 func        : OUT std_logic_vector(5 downto 0);
 			 immValue    : OUT std_logic_vector(15 downto 0));
-	end component Decoder;
+	end component;
 
 	component FetchRegister
-		port(clk           : IN  std_logic;
+		port(    clk           : IN  std_logic;
 			 enable        : IN  std_logic;
 			 opSelect      : IN  std_logic_vector(5 downto 0);
 			 regSource     : IN  std_logic_vector(4 downto 0);
@@ -47,6 +46,7 @@ architecture behavior of FetchCycle is
 			 regDest       : IN  std_logic_vector(4 downto 0);
 			 func          : IN  std_logic_vector(5 downto 0);
 			 immValue      : IN  std_logic_vector(15 downto 0);
+			 instruction   : IN  std_logic_vector(31 downto 0);			
 			 PCPlus4       : IN  std_logic_vector(31 downto 0);
 			 OUT_opSelect  : OUT std_logic_vector(5 downto 0);
 			 OUT_regSource : OUT std_logic_vector(4 downto 0);
@@ -54,8 +54,10 @@ architecture behavior of FetchCycle is
 			 OUT_regDest   : OUT std_logic_vector(4 downto 0);
 			 OUT_func      : OUT std_logic_vector(5 downto 0);
 			 OUT_immValue  : OUT std_logic_vector(15 downto 0);
-			 OUT_PCPlus4   : OUT std_logic_vector(31 downto 0));
-	end component FetchRegister;
+			 OUT_PCPlus4   : OUT std_logic_vector(31 downto 0);
+			 OUT_instruction : OUT std_logic_vector(31 downto 0)
+			);
+	end component;
 
 	component Adder
 		port(
@@ -63,16 +65,17 @@ architecture behavior of FetchCycle is
 			B_in  : IN  std_logic_vector(31 downto 0);
 			O_out : Out std_logic_vector(31 downto 0)
 		);
-	end component Adder;
+	end component;
 
 	component PC
 		port(
 			clk         : IN  std_logic;
+			enable	    : IN  std_logic;
 			countUpdate : IN  std_logic;
 			countIn     : IN  std_logic_vector(31 downto 0); --PC Prime 
 			counter     : OUT std_logic_vector(31 downto 0)
 		);
-	end component PC;
+	end component;
 
 	--===========================SIGNALS============================--
 	--To instruction memory--
@@ -111,6 +114,7 @@ begin
 	ftchReg : component FetchRegister
 		port map(
 			clk           => clk,
+			enable	      => enable,
 			opSelect      => opSelectSig,
 			regSource     => regSourceSig,
 			regTarget     => regTargetSig,

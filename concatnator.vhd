@@ -15,6 +15,6 @@ end Concatinator;
 
 architecture behavioral of Concatinator is
 begin
-	--concatOut[31 downto 27) <= PC_in;
-	concatOut <= PC_in(31 downto 26) & InstructionMem(25 downto 0);
+	concatOut(31 downto 26) <= PC_in(31 downto 26);
+	concatOut(25 downto 0)<= InstructionMem(25 downto 0); 
 end behavioral;
