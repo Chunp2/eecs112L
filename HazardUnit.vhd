@@ -12,14 +12,14 @@ entity HazardUnit is
 		MemRead     : IN  std_logic;
 		Branch		: IN  std_logic;
 
-		RegSourceD  : IN  std_logic_vector(5 downto 0);
-		RegTargetD  : IN  std_logic_vector(5 downto 0);
-		RegSourceF  : IN  std_logic_vector(5 downto 0);
-		RegTargetF  : IN  std_logic_vector(5 downto 0);
+		RegSourceD  : IN  std_logic_vector(4 downto 0);
+		RegTargetD  : IN  std_logic_vector(4 downto 0);
+		RegSourceF  : IN  std_logic_vector(4 downto 0);
+		RegTargetF  : IN  std_logic_vector(4 downto 0);
 
-		RegDestE	: IN  std_logic_vector(5 downto 0);
-		RegDestW    : IN  std_logic_vector(5 downto 0);
-		RegDestM    : IN  std_logic_vector(5 downto 0);
+		RegDestE	: IN  std_logic_vector(4 downto 0);
+		RegDestW    : IN  std_logic_vector(4 downto 0);
+		RegDestM    : IN  std_logic_vector(4 downto 0);
 
 		--logic control outputs--
 		ForwardBE   : OUT std_logic_vector(1 downto 0) := "00";
