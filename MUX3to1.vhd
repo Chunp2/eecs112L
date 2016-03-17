@@ -14,7 +14,7 @@ end MUX3to1;
 
 architecture behavior of MUX3to1 is
 begin
-	process(selector)
+	process(selector,NormalInput,JUIInput,JALInput)
 	begin
 		if (selector="00") then --Normal Input
 			wdata <= NormalInput;

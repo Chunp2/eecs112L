@@ -67,13 +67,13 @@ architecture behavior of writeBackCycle is
 			 dataOut : OUT std_logic_vector(31 DOWNTO 0));
 	end component;
 
-	component MUX3to1
-		port(NormalInput : IN  std_logic_vector(31 downto 0);
-			 JUIInput    : IN  std_logic_vector(31 downto 0);
-			 JALInput    : IN  std_logic_vector(31 downto 0);
-			 selector    : IN  std_logic_vector(1 downto 0);
-			 wdata       : OUT std_logic_vector(31 downto 0));
-	end component;
+	--component MUX3to1
+	--	port(NormalInput : IN  std_logic_vector(31 downto 0);
+	--		 JUIInput    : IN  std_logic_vector(31 downto 0);
+	--		 JALInput    : IN  std_logic_vector(31 downto 0);
+	--		 selector    : IN  std_logic_vector(1 downto 0);
+	--		 wdata       : OUT std_logic_vector(31 downto 0));
+	--end component;
 
 	component writeRegister
 		port(clk                 : in  STD_LOGIC;
@@ -135,14 +135,14 @@ begin
 			Bin  => branch,
 			Cout => PCUpdateControl
 		);
-	WDATAMUX : component MUX3to1
-		port map(
-			NormalInput => tier2WriteData,
-			JUIInput    => ExtendedJUI,
-			JALInput    => PC,
-			selector    => wdataContr,
-			wdata       => FinalWriteData
-		);
+	--WDATAMUX : component MUX3to1
+	--	port map(
+	--		NormalInput => tier2WriteData,
+		--	JUIInput    => ExtendedJUI,
+	--		JALInput    => PC,
+	--		selector    => wdataContr,
+	--		wdata       => FinalWriteData
+	--	);
 	AFTERRAMMUX : component MUX32bit
 		port map(
 			high     => tier1Writedata,
@@ -168,6 +168,7 @@ begin
 			out_writeReg        => out_writeReg,
 			out_newPC           => out_newPC
 		);
+	FinalWriteData <= tier2WriteData;
 	HazardForwarded <= tier2Writedata;
 	out_ReadDataW <= ReadDataW_In;
 	out_ALUOutW <= ALUOutW_In;

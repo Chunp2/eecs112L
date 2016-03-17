@@ -274,15 +274,15 @@ begin
 		);
 	RegALU : component MUX32bit 
 		Port map(
-			high	=> RData2, 
-			low		=> ExtendedImmValue,
+			high	=> ExtendedImmValue, 
+			low		=> ForwardBOut,
 			selector	=> ALUSrc,
 			out_put		=> Bin
 		);
 	shiftmux : component MUX32bit 
 		Port map(
-			high		=> ForwardAOut,
-			low			=> ExtendedShiftAmount,
+			high		=> ExtendedShiftAmount,
+			low			=> ForwardAOut,
 			selector	=> ShiftContr,
 			out_put		=> tier3Ain
 		);

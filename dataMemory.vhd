@@ -19,7 +19,7 @@ END ENTITY dataMemory;
 ARCHITECTURE behavior OF dataMemory IS
 	
 	TYPE ramType IS ARRAY(0 to (2**9)) OF STD_LOGIC_VECTOR(31 DOWNTO 0);
-	SIGNAL ram: ramType :=(others => std_logic_vector(to_unsigned(0,32)));
+	SIGNAL ram: ramType :=(others => std_logic_vector(to_unsigned(3,32)));
 	SIGNAL readAddr: STD_LOGIC_VECTOR(31 DOWNTO 0);
 	
 

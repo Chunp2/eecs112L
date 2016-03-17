@@ -22,9 +22,7 @@ architecture behavior of regfile is
 	signal mem: registerArray :=(others => std_logic_vector(to_unsigned(0,32)));
 	signal testSig	: std_logic_vector(31 downto 0);
 begin
-	testSig <= mem(to_integer(unsigned(raddr_1)));
-	--rdata_1 <= testSig;
-	rdata_1 <= std_logic_vector(to_unsigned(5,32));
+	rdata_1 <= mem(to_integer(unsigned(raddr_1)));
 	rdata_2 <= mem(to_integer(unsigned(raddr_2)));
 	process(clk,raddr_1,raddr_2,waddr,wdata,rst_s,we) begin
 		if rising_edge(clk) then
