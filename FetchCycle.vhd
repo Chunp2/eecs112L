@@ -15,7 +15,8 @@ entity FetchCycle is
 		OUT_func           : OUT std_logic_vector(5 downto 0);
 		OUT_immValue       : OUT std_logic_vector(15 downto 0);
 		OUT_PCPlus4        : OUT std_logic_vector(31 downto 0);
-		OUT_instruction	   : OUT std_logic_vector(31 downto 0)
+		OUT_instruction	   : OUT std_logic_vector(31 downto 0);
+		OUT_PC		   : OUT std_logic_vector(31 downto 0)
 	);
 end FetchCycle;
 
@@ -48,6 +49,7 @@ architecture behavior of FetchCycle is
 			 immValue      : IN  std_logic_vector(15 downto 0);
 			 instruction   : IN  std_logic_vector(31 downto 0);			
 			 PCPlus4       : IN  std_logic_vector(31 downto 0);
+			 PC	       : IN  std_logic_vector(31 downto 0);
 			 OUT_opSelect  : OUT std_logic_vector(5 downto 0);
 			 OUT_regSource : OUT std_logic_vector(4 downto 0);
 			 OUT_regTarget : OUT std_logic_vector(4 downto 0);
@@ -55,7 +57,8 @@ architecture behavior of FetchCycle is
 			 OUT_func      : OUT std_logic_vector(5 downto 0);
 			 OUT_immValue  : OUT std_logic_vector(15 downto 0);
 			 OUT_PCPlus4   : OUT std_logic_vector(31 downto 0);
-			 OUT_instruction : OUT std_logic_vector(31 downto 0)
+			 OUT_instruction : OUT std_logic_vector(31 downto 0);
+			 OUT_PC		: OUT std_logic_vector(31 downto 0)
 			);
 	end component;
 
@@ -123,6 +126,7 @@ begin
 			immValue      => immValueSig,
 			PCPlus4       => PCPlus4,
 			instruction	  => to_Decoder,
+			PC	      => programcounter_sig,
 			OUT_opSelect  => OUT_opSelect,
 			OUT_regSource => OUT_regSource,
 			OUT_regTarget => OUT_regTarget,
@@ -130,7 +134,8 @@ begin
 			OUT_func      => OUT_func,
 			OUT_immValue  => OUT_immValue,
 			OUT_PCPlus4   => OUT_PCPlus4,
-			OUT_instruction => OUT_instruction
+			OUT_instruction => OUT_instruction,
+			OUT_PC	      => OUT_PC
 		);
 	PC_PlusOne : component Adder
 		port map(

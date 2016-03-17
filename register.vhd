@@ -1,7 +1,7 @@
 library IEEE; 
 use IEEE.std_logic_1164.all;
 use IEEE.std_logic_signed.all;
-use IEEE.numeric_std.all;
+use ieee.numeric_std.all;
 
 entity regfile is 
 	 port(
@@ -18,34 +18,27 @@ entity regfile is
 end;
 
 architecture behavior of regfile is
-	type registerArray is array (31 downto 0) of STD_LOGIC_VECTOR(31 downto 0);
-	signal mem: registerArray;
+	type registerArray is array (31 downto 0) of STD_LOGIC_VECTOR(31 downto 0); 
+	signal mem: registerArray :=(others => std_logic_vector(to_unsigned(0,32)));
+	signal testSig	: std_logic_vector(31 downto 0);
 begin
-
-	process(clk) begin
+	testSig <= mem(to_integer(unsigned(raddr_1)));
+	--rdata_1 <= testSig;
+	rdata_1 <= std_logic_vector(to_unsigned(5,32));
+	rdata_2 <= mem(to_integer(unsigned(raddr_2)));
+	process(clk,raddr_1,raddr_2,waddr,wdata,rst_s,we) begin
 		if rising_edge(clk) then
 			if we = '1' then 
 				mem(conv_integer(waddr)) <= wdata;
 			end if;
+			if rst_s = '1' then
+				mem <= (OTHERS => x"00000000");
+			end if;
+			
 		end if;
 	end process;
 	
-	process(clk,we,raddr_1,raddr_2,waddr,wdata) begin
-		if rst_s = '1' then
-			mem <= (OTHERS => x"00000000");
-		end if;
-		if (conv_integer(raddr_1) = 0) then 
-			rdata_1 <= X"00000000";
-		else 
-			rdata_1 <= mem(conv_integer(raddr_1));
-		end if;
-		if (conv_integer(raddr_2) = 0) then 
-			rdata_2 <= X"00000000";
-		else 
-			rdata_2 <= mem(conv_integer(raddr_2));
-		end if;
-	end process;
-end;
+end architecture;
 
 
 

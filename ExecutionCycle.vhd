@@ -49,7 +49,7 @@ entity ExecutionCycle is
 
 		--===============data path==================--
 		OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
-		OUT_RData2               : OUT std_logic_vector(4 downto 0);
+		OUT_RData2               : OUT std_logic_vector(31 downto 0);
 		OUT_RegisterWriteAddress : OUT std_logic_vector(4 downto 0);
 		OUT_newPC				 : OUT std_logic_vector(31 downto 0);
 		OUT_JumpAddress          : OUT std_logic_vector(31 downto 0);
@@ -97,7 +97,7 @@ architecture behavior of ExecutionCycle is
 		OUT_wdataContr           : OUT std_logic_vector(1 downto 0);
 	
 		OUT_ALUResult            : OUT std_logic_vector(31 downto 0);
-		OUT_RData2               : OUT std_logic_vector(4 downto 0);
+		OUT_RData2               : OUT std_logic_vector(31 downto 0);
 		OUT_RegisterWriteAddress : OUT std_logic_vector(4 downto 0);
 		OUT_newPC				 : OUT std_logic_vector(31 downto 0);
 		OUT_JumpAddress          : OUT std_logic_vector(31 downto 0);
@@ -267,8 +267,8 @@ begin
 		);
 	MUXJumpRegOrOffset : component MUX32bit 
 		Port map(
-			high		=> Rdata1,
-			low			=> tier1JumpAddress,
+			high		=> tier1JumpAddress,
+			low		=> Rdata1,
 			selector	=> JRControl,
 			out_put		=> tier2JumpAddress
 		);
@@ -336,6 +336,7 @@ begin
 		OUT_ALUResult            => OUT_ALUResult,
 		OUT_RData2               => OUT_RData2,
 		OUT_RegisterWriteAddress => OUT_RegisterWriteAddress,
+		OUT_newPC		 => OUT_newPC,
 		OUT_JumpAddress          => OUT_JumpAddress,
 		OUT_BranchAdress         => OUT_BranchAddress,
 		OUT_ExtendedJUI          => OUT_ExtendedJUI,

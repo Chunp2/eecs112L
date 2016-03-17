@@ -18,6 +18,7 @@ entity FetchRegister is
 		immValue        : IN  std_logic_vector(15 downto 0);
 		PCPlus4         : IN  std_logic_vector(31 downto 0);
 		instruction     : IN  std_logic_vector(31 downto 0);
+		PC		: IN  std_logic_vector(31 downto 0);
 
 		--Output signals
 		OUT_opSelect    : OUT std_logic_vector(5 downto 0);
@@ -27,7 +28,8 @@ entity FetchRegister is
 		OUT_func        : OUT std_logic_vector(5 downto 0);
 		OUT_immValue    : OUT std_logic_vector(15 downto 0);
 		OUT_PCPlus4     : OUT std_logic_vector(31 downto 0);
-		OUT_instruction : OUT std_logic_vector(31 downto 0)
+		OUT_instruction : OUT std_logic_vector(31 downto 0);
+		OUT_PC		: OUT std_logic_vector(31 downto 0)
 	);
 end FetchRegister;
 
@@ -36,7 +38,7 @@ begin
 	process(clk)
 	begin
 		if (rising_edge(clk)) then
-			if enable = '1' then
+			if enable = '0' then
 				OUT_opSelect    <= opSelect;
 				OUT_regSource   <= regSource;
 				OUT_regTarget   <= regTarget;
@@ -45,6 +47,7 @@ begin
 				OUT_immValue    <= immValue;
 				OUT_PCPlus4     <= PCPlus4;
 				OUT_instruction <= instruction;
+				OUT_PC		<= PC;
 			end if;
 		end if;
 	end process;

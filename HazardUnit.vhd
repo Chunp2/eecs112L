@@ -5,6 +5,7 @@ use ieee.numeric_std.all;
 entity HazardUnit is
 	Port(
 		--logic control inputs--
+		clk		: IN std_logic;
 		RegWriteE	: IN  std_logic;
 		RegWriteM   : IN  std_logic;
 		RegWriteW   : IN  std_logic;
@@ -32,8 +33,9 @@ end HazardUnit;
 
 architecture behavior of HazardUnit is
 begin
-	process
+	process(clk)
 	begin
+	if (rising_edge(clk)) then
 		--EX Hazard
 		if (RegWriteM = '1') then
 			if ( (NOT(RegDestM = "00000")) AND (RegDestM = RegSourceD)) then
@@ -74,6 +76,6 @@ begin
 			FetchStall  <= '0';
 			PCStall     <= '0';
 		end if;
-	
+	end if;
 	end process;
 end behavior;

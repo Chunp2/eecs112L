@@ -4,15 +4,18 @@ use ieee.numeric_std.all;
 
 entity proc is
 	Port(
-		clk   : IN std_logic;
+		ref_clk   : IN std_logic;
 		reset : IN std_logic;
-		enable : IN std_logic
+		enable : IN std_logic;
+		finalOutput: OUT std_logic_vector(31 downto 0)
 	);
 end entity;
 
 architecture behavior of proc is
 	component HazardUnit
-		port(RegWriteE   : IN  std_logic;
+		port(
+			 clk	     : IN  std_logic;
+			 RegWriteE   : IN  std_logic;
 			 RegWriteM   : IN  std_logic;
 			 RegWriteW   : IN  std_logic;
 			 MemToRegM   : IN  std_logic;
@@ -37,13 +40,6 @@ architecture behavior of proc is
 			 enable		    : IN std_logic;
 			 newPC           : IN  std_logic_vector(31 downto 0);
 			 countUpdateWBCycle  : IN  std_logic;
-			 opSelect            : OUT std_logic_vector(5 downto 0);
-			 regSource           : OUT std_logic_vector(4 downto 0);
-			 regTarget           : OUT std_logic_vector(4 downto 0);
-			 regDest             : OUT std_logic_vector(4 downto 0);
-			 func                : OUT std_logic_vector(5 downto 0);
-			 immValue            : OUT std_logic_vector(15 downto 0);
-			 PCPlus4D            : OUT std_logic_vector(31 downto 0);
 			 OUT_opSelect        : OUT std_logic_vector(5 downto 0);
 			 OUT_regSource       : OUT std_logic_vector(4 downto 0);
 			 OUT_regTarget       : OUT std_logic_vector(4 downto 0);
@@ -51,7 +47,8 @@ architecture behavior of proc is
 			 OUT_func            : OUT std_logic_vector(5 downto 0);
 			 OUT_immValue        : OUT std_logic_vector(15 downto 0);
 			 OUT_PCPlus4         : OUT std_logic_vector(31 downto 0);
-			 OUT_instruction     : OUT std_logic_vector(31 downto 0)		
+			 OUT_instruction     : OUT std_logic_vector(31 downto 0);
+			 OUT_PC		     : OUT std_logic_vector(31 downto 0)		
 		);
 			
 	end component FetchCycle;
@@ -70,6 +67,7 @@ architecture behavior of proc is
 			 PCPlus4                 : IN  std_logic_vector(31 downto 0);
 			 finalWriteData          : IN  std_logic_vector(31 downto 0);
 			 regWrite                : IN  std_logic;
+			 PC			 : IN  std_logic_vector(31 downto 0);
 			 out_PCPlus4             : OUT std_logic_vector(31 downto 0);
 			 out_PC                  : OUT std_logic_vector(31 downto 0);
 			 out_RegDst              : OUT std_logic;
@@ -112,7 +110,7 @@ architecture behavior of proc is
 			 ShiftContr               : IN  std_logic;
 			 wdataContr               : IN  std_logic_vector(1 downto 0);
 			 JRControl                : IN  std_logic;
-			 ALUFunc                  : IN  std_logic_vector(5 downto 0);
+			 ALUFuncCode              : IN  std_logic_vector(5 downto 0);
 			 opSelect                 : IN  std_logic_vector(5 downto 0);
 			 ForwardedALUM            : IN  std_logic_vector(31 downto 0);
 			 ForwardedALUW            : IN  std_logic_vector(31 downto 0);
@@ -177,6 +175,7 @@ architecture behavior of proc is
 	signal immValueF                          : std_logic_vector(15 downto 0);
 	signal PCPlus4F                           : std_logic_vector(31 downto 0);
 	signal instructionF                       : std_logic_vector(31 downto 0);
+	signal PCF				  : std_logic_vector(31 downto 0);
 	--signals out of Decode Cycle
 	signal PCPlus4D                           : std_logic_vector(31 downto 0);
 	signal PCD                                : std_logic_vector(31 downto 0);
@@ -224,8 +223,8 @@ architecture behavior of proc is
 begin
 	Fetch : component FetchCycle
 		port map(
-			clk                => clk,
-			enable             => enable,
+			clk                => ref_clk,
+			enable             => PCStall,
 			newPC              => PCPlus4W,
 			countUpdateWBCycle => PCUpdateControlW,
 			OUT_opSelect       => opSelectF,
@@ -235,12 +234,13 @@ begin
 			OUT_func           => funcF,
 			OUT_immValue       => immValueF,
 			OUT_PCPlus4        => PCPlus4F,
-			OUT_instruction    => instructionF
+			OUT_instruction    => instructionF,
+			OUT_PC		   => PCF
 		);
 
 	Decode : component DecodeCycle
 		port map(
-			clk                     => clk,
+			clk                     => ref_clk,
 			flush                   => decodeFlush,
 			reset                   => reset,
 			instruction             => instructionF,
@@ -253,6 +253,7 @@ begin
 			PCPlus4                 => PCPlus4F,
 			finalWriteData          => finalWriteData,
 			regWrite                => regWriteW,
+			PC			=> PCF,
 			out_PCPlus4             => PCPlus4D,
 			out_PC                  => PCD,
 			out_RegDst              => regDestControlD,
@@ -281,7 +282,7 @@ begin
 
 	Execution : component ExecutionCycle
 		port map(
-			clk                      => clk,
+			clk                      => ref_clk,
 			ForwardAE                => ForwardAE,
 			ForwardBE                => ForwardBE,
 			RegDst                   => RegDestControlD,
@@ -296,7 +297,7 @@ begin
 			ShiftContr               => ShiftContrD,
 			wdataContr               => wdataContrD,
 			JRControl                => JRControlD,
-			ALUFunc                  => ALUFuncD,
+			ALUFuncCode              => ALUFuncD,
 			opSelect                 => opSelectD,
 			ForwardedALUM            => ALUResultE,
 			ForwardedALUW            => HazardForwardedW,
@@ -328,7 +329,7 @@ begin
 		);
 	WriteBack : component writeBackCycle
 		port map(
-			clk                  => clk,
+			clk                  => ref_clk,
 			MemRead              => MemReadE,
 			MemtoReg             => MemtoRegE,
 			MemWrite             => MemWriteE,
@@ -356,6 +357,7 @@ begin
 		);
 	Hazard : component HazardUnit
 		port map(
+			clk	    => ref_clk,
 			RegWriteE   => RegWriteD,
 			RegWriteM   => RegWriteE,
 			RegWriteW   => RegWriteW,
@@ -375,4 +377,5 @@ begin
 			FetchStall  => FetchStall,
 			PCStall     => PCStall
 		);
+		finalOutput<= FinalWriteData;
 end behavior;

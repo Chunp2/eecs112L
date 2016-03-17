@@ -216,6 +216,7 @@ architecture behavior of DecodeCycle is
 		OUT_PC                  : OUT std_logic_vector(31 downto 0)
 		);
 	end component;
+------------------------------------------------------------------------------
 	
 ----------------------------------signal decleration ----------------------------------------------------
 -------------------------------------controller---------------------------------------------
@@ -223,7 +224,6 @@ SIGNAL RegDstC				: std_logic;
 SIGNAL ALUOp				: std_logic_vector(4 downto 0);		
 SIGNAL MemRead				: std_logic;					--1 is read from RAM 0 is don't read from RAM
 SIGNAL MemtoReg				: std_logic;					--1 is write using RAM data, 0 is write using ALU output
-SIGNAL ALUOpC				: std_logic_vector(4 downto 0); 
 SIGNAL MemWrite				: std_logic;					--1 is write into RAM, 0 is don't write into RAM
 SIGNAL ALUSrc				: std_logic;					--1 is ALU Bin is immediate value, 0 is ALU Bin is Register data
 SIGNAL RegWriteC				: std_logic;					--1 is write into Register, 0 is don't write into register
@@ -306,7 +306,7 @@ begin
 				--loadOp=> ALUOp,
 				loadOp=> opSelect,
 				dataIn => rdata_1,
-				dataOut => storeOut
+				dataOut => loadOut
 				);
 	Reg:regfile		Port map(
 				clk	=>	clk,
@@ -315,16 +315,16 @@ begin
 				raddr_1 =>	regSource,
 				raddr_2 =>	regTarget,
 				waddr	=>	output5,
-				rdata_1 =>	out_rdata_1,
-				rdata_2 =>	out_rdata_2,
+				rdata_1 =>	rdata_1,
+				rdata_2 =>	rdata_2,
 				wdata	=>	finalWriteData
 				);	
 
 	ALUControl:ALUFunc      Port map(
-				ALUOp		=> ALUOpC,
+				ALUOp		=> ALUOp,
 				FuncField	=> func,
-				JRControl   	=> out_JRControl,----JRControl,
-				out_put		=> out_ALUfunc--FuncIn
+				JRControl   	=> JRControlA,----JRControl,
+				out_put		=> FuncFieldA--FuncIn
 				);	
 	SignExt:SignExtender 	Port map(
 				in_put	=> immValue,
@@ -339,22 +339,22 @@ begin
 		RegDst                  =>RegDstC,
 		MemRead                 =>MemRead,
 		MemtoReg                =>MemtoReg,
-		ALUOp                   =>ALUOpC,
+		ALUOp                   =>ALUOp,
 		MemWrite                =>MemWrite,
 		ALUSrc                  =>ALUSrc,
-		RegWrite                =>RegWrite,
+		RegWrite                =>RegWriteC,
 		Branch                  =>Branch,
 		Jump                    =>Jump,
 		ShiftContr              =>ShiftContr,
 		wdataContr              =>wdataContr,
-		opSelect                =>opSelectF,
+		opSelect                =>opSelect,
 		--control bits from ALUFunc
 		JRControl               =>JRControlA,
 		ALUFunc                 =>FuncFieldA,
 
 		--data path entries
 		--data entries from the Register File
-		RData1                  =>rdata_1,
+		RData1                  =>loadOut,
 		RData2                  =>rdata_2,
 		--data entries from Instruction Code data
 		RegDestination          =>output5,
