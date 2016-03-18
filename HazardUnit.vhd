@@ -40,19 +40,37 @@ begin
 		if (RegWriteM = '1') then
 			if ( (NOT(RegDestM = "00000")) AND (RegDestM = RegSourceD)) then
 				ForwardAE <= "10";
+				ForwardBE <= "00";
+				DecodeFlush <= '0';
+				FetchStall  <= '0';
+				PCStall     <= '0';
 			elsif (NOT (RegDestM = "00000") AND (RegDestM = RegTargetD)) then
+				ForwardAE <= "00";
 				ForwardBE <= "10";
+				DecodeFlush <= '0';
+				FetchStall  <= '0';
+				PCStall     <= '0';
 			end if;
 		--MEM Hazard
 		elsif (RegWriteW = '1') then
 			if (NOT (RegDestW = "00000") AND (RegDestW = RegSourceD)) then
 				ForwardAE <= "01";
+				ForwardBE <= "00";
+				DecodeFlush <= '0';
+				FetchStall  <= '0';
+				PCStall     <= '0';
 			elsif (NOT (RegDestW = "00000") AND (RegDestW = RegTargetD)) then
+				ForwardAE <= "00";
 				ForwardBE <= "01";
+				DecodeFlush <= '0';
+				FetchStall  <= '0';
+				PCStall     <= '0';
 			end if;
 		--Stall hazard for lw
 		elsif (MemRead = '1') then
 			if (RegTargetD = RegSourceF) OR (RegTargetD = RegTargetF) then
+				ForwardAE <= "00";
+				ForwardBE <= "00";
 				DecodeFlush <= '1';
 				FetchStall  <= '1';
 				PCStall     <= '1';
@@ -60,10 +78,14 @@ begin
 		--stall for branches
 		elsif (Branch = '1') then
 			if ((RegWriteE='1') AND ((RegSourceD=RegDestE) OR (RegTargetD=RegDestE))) then 
+				ForwardAE <= "00";
+				ForwardBE <= "00";
 				DecodeFlush <= '1';
 				FetchStall  <= '1';
 				PCStall     <= '1';
 			elsif (MemToRegM='1') AND ((RegSourceD=RegDestM) OR (RegTargetD=RegDestM)) then
+				ForwardAE <= "00";
+				ForwardBE <= "00";
 				DecodeFlush <= '1';
 				FetchStall  <= '1';
 				PCStall     <= '1';
